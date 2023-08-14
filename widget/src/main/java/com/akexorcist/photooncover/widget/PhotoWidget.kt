@@ -16,7 +16,6 @@ class PhotoWidget(
     private var lastGlanceId: GlanceId? = null
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-
         provideContent {
             if (lastGlanceId == null || lastGlanceId != id) {
                 lastGlanceId = id

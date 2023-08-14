@@ -58,9 +58,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.akexorcist.photooncover.R
-import com.akexorcist.photooncover.config.PhotoHeightForGalaxyZFlip5
-import com.akexorcist.photooncover.config.PhotoRatioForGalaxyZFlip5
-import com.akexorcist.photooncover.config.PhotoWidthForGalaxyZFlip5
+import com.akexorcist.photooncover.core.config.PhotoHeightForGalaxyZFlip5
+import com.akexorcist.photooncover.core.config.PhotoRatioForGalaxyZFlip5
+import com.akexorcist.photooncover.core.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.core.utility.FileUtility
 import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
@@ -180,7 +180,7 @@ private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
                 columns = GridCells.Fixed(2),
                 content = {
                     items(count = photos.size) { position ->
-                        photos.getOrNull(position)?.path?.let { path ->
+                        photos.getOrNull(position)?.fileName?.let { path ->
                             val photoUri = File(FileUtility.getPhotoDirectory(context), path)
                             AsyncImage(
                                 modifier = Modifier

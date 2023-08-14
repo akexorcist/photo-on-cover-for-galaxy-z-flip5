@@ -32,6 +32,7 @@ class HomeViewModel(
             else -> null
         }?.let { extension ->
             val result = photoRepository.addNewPhoto(uri, extension)
+            // TODO
         }
     }
 }

@@ -1,17 +1,12 @@
 package com.akexorcist.photooncover.widget
 
-import android.net.Uri
-import android.util.Log
+import android.graphics.ImageDecoder
+import android.util.DisplayMetrics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
 import androidx.glance.GlanceModifier
@@ -19,8 +14,8 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.ImageProvider
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -31,11 +26,11 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
-import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.akexorcist.photooncover.core.config.PhotoRatioForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.core.navigation.WidgetNavigation
 import com.akexorcist.photooncover.core.utility.FileUtility
@@ -78,23 +73,10 @@ fun PhotoScreen(
     onOpenAppClick: () -> Unit,
     onReloadClick: () -> Unit,
 ) {
-    Log.e("Check", "Path ${photo?.path}")
-    val context = LocalContext.current
-    photo?.path
-        ?.let { path ->
-            FileProvider.getUriForFile(
-                LocalContext.current,
-                "com.akexorcist.photooncover.fileprovider",
-                File(FileUtility.getPhotoDirectory(context), path),
-            )
-        }
-//        ?.let { path ->
-//            Uri.fromFile(File(FileUtility.getPhotoDirectory(context), path))
-//        }
-        ?.let { photoUri ->
-            Log.e("Check", "Photo URI $photoUri")
+    photo?.fileName
+        ?.let { fileName ->
             PhotoContent(
-                photoUri = photoUri,
+                fileNameWithExtension = fileName,
                 isPreviousPhotoAvailable = isPreviousPhotoAvailable,
                 isNextPhotoAvailable = isNextPhotoAvailable,
                 onPreviousPhotoClick = onPreviousPhotoClick,
@@ -111,7 +93,7 @@ fun PhotoScreen(
 
 @Composable
 private fun PhotoContent(
-    photoUri: Uri,
+    fileNameWithExtension: String,
     isPreviousPhotoAvailable: Boolean,
     isNextPhotoAvailable: Boolean,
     onPreviousPhotoClick: () -> Unit,
@@ -120,7 +102,7 @@ private fun PhotoContent(
     Column {
         PhotoCard(
             modifier = GlanceModifier.defaultWeight(),
-            photoUri = photoUri,
+            fileNameWithExtension = fileNameWithExtension,
         )
         BottomBar(
             isPreviousPhotoAvailable = isPreviousPhotoAvailable,
@@ -219,9 +201,18 @@ fun NoPhotoAvailable(
 @Composable
 private fun PhotoCard(
     modifier: GlanceModifier = GlanceModifier,
-    photoUri: Uri,
+    fileNameWithExtension: String,
 ) {
-
+    val context = LocalContext.current
+    val scaleFactor = context.resources.configuration.densityDpi / DisplayMetrics.DENSITY_MEDIUM.toFloat()
+    val file = File(FileUtility.getPhotoDirectory(context), fileNameWithExtension)
+    val size = LocalSize.current
+    val imageWidth = (size.width.value * scaleFactor)
+    val imageHeight = imageWidth / PhotoRatioForGalaxyZFlip5
+    val source = ImageDecoder.createSource(file)
+    val bitmap = ImageDecoder.decodeBitmap(source) { imageDecoder, _, _ ->
+        imageDecoder.setTargetSize(imageWidth.toInt(), imageHeight.toInt())
+    }
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
@@ -229,13 +220,12 @@ private fun PhotoCard(
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(color = Color.White)
-                .padding(32.dp),
+                .background(color = GlanceTheme.colors.background.getColor(context)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                provider = ImageProvider(photoUri),
-                contentDescription = null,
+                provider = ImageProvider(bitmap),
+                contentDescription = "Photo on cover",
             )
         }
     }

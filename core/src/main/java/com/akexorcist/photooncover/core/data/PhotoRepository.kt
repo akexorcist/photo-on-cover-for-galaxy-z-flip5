@@ -29,14 +29,14 @@ class DefaultPhotoRepository(
         }
     }
 
-    override suspend fun addNewPhoto(originalUri: Uri, extension: String): Boolean {
+    override suspend fun addNewPhoto(uri: Uri, extension: String): Boolean {
         val fileName = UUID.randomUUID().toString()
         val order = dataSource.getLastOrder() + 1
         copyPhotoToInternalStorage(
             context = context,
             fileName = fileName,
             extension = extension,
-            uri = originalUri,
+            uri = uri,
         ) ?: return false
         val photo = PhotoEntity(
             id = fileName,
