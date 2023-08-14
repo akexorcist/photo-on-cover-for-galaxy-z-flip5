@@ -1,5 +1,6 @@
 package com.akexorcist.photooncover.ui.feature.home
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +25,13 @@ class HomeViewModel(
             )
         }
 
-    fun addPhoto(uri: Uri) = viewModelScope.launch {
-        val result = photoRepository.addNewPhoto(uri)
+    fun addPhoto(uri: Uri, format: Bitmap.CompressFormat) = viewModelScope.launch {
+        when (format) {
+            Bitmap.CompressFormat.PNG -> ".png"
+            Bitmap.CompressFormat.JPEG -> ".jpg"
+            else -> null
+        }?.let { extension ->
+            val result = photoRepository.addNewPhoto(uri, extension)
+        }
     }
 }

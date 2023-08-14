@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.akexorcist.photooncover.ui.feature.home
 
 import android.graphics.Bitmap
@@ -30,7 +28,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -65,12 +62,18 @@ import com.akexorcist.photooncover.config.PhotoHeightForGalaxyZFlip5
 import com.akexorcist.photooncover.config.PhotoRatioForGalaxyZFlip5
 import com.akexorcist.photooncover.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
+import com.akexorcist.photooncover.core.utility.FileUtility
 import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
+import java.io.File
+
+@Suppress("PrivatePropertyName")
+private val JpegCompressFormat = Bitmap.CompressFormat.JPEG
 
 @Composable
 fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
@@ -79,7 +82,7 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
 
     val cropPhotoLauncher = rememberLauncherForActivityResult(
         contract = CropImageContract(),
-        onResult = { result -> result.uriContent?.let { viewModel.addPhoto(it) } },
+        onResult = { result -> result.uriContent?.let { viewModel.addPhoto(it, JpegCompressFormat) } },
     )
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -96,6 +99,7 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
                 cropImageOptions = cropImageOption(
                     cropGuidelineColor = Color.White,
                     colorScheme = colorScheme,
+                    compressFormat = JpegCompressFormat,
                 ),
             )
         )
@@ -169,20 +173,22 @@ private fun HomeTopBar(
 
 @Composable
 private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
+    val context = LocalContext.current
     Box(modifier = Modifier.padding(padding)) {
-        if (!photos.isNullOrEmpty()) {
+        if (photos.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 content = {
                     items(count = photos.size) { position ->
-                        photos.getOrNull(position)?.let { photo ->
+                        photos.getOrNull(position)?.path?.let { path ->
+                            val photoUri = File(FileUtility.getPhotoDirectory(context), path)
                             AsyncImage(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5)
                                     .clip(FloatingActionButtonDefaults.shape),
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(photo.path)
+                                    .data(photoUri)
                                     .crossfade(300)
                                     .build(),
                                 contentScale = ContentScale.Crop,
@@ -286,18 +292,21 @@ private fun HomeScreenPreview() {
     }
 }
 
+@Suppress("SameParameterValue")
 private fun cropImageOption(
     cropGuidelineColor: Color,
     colorScheme: ColorScheme,
+    compressFormat: Bitmap.CompressFormat,
 ) = CropImageOptions(
     fixAspectRatio = true,
     aspectRatioX = PhotoWidthForGalaxyZFlip5,
     aspectRatioY = PhotoHeightForGalaxyZFlip5,
     outputRequestWidth = PhotoWidthForGalaxyZFlip5,
     outputRequestHeight = PhotoHeightForGalaxyZFlip5,
+    outputRequestSizeOptions = CropImageView.RequestSizeOptions.RESIZE_EXACT,
     backgroundColor = colorScheme.background.copy(alpha = 0.75f).toArgb(),
     activityBackgroundColor = colorScheme.background.toArgb(),
-    outputCompressFormat = Bitmap.CompressFormat.JPEG,
+    outputCompressFormat = compressFormat,
     cropperLabelTextColor = colorScheme.onPrimaryContainer.toArgb(),
     activityMenuIconColor = colorScheme.onPrimaryContainer.toArgb(),
     activityMenuTextColor = colorScheme.onPrimaryContainer.toArgb(),
