@@ -31,8 +31,7 @@ class HomeViewModel(
             Bitmap.CompressFormat.JPEG -> ".jpg"
             else -> null
         }?.let { extension ->
-            val result = photoRepository.addNewPhoto(uri, extension)
-            // TODO
+            photoRepository.addNewPhoto(uri, extension)
         }
     }
 }

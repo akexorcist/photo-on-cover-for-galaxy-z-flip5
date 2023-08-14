@@ -11,6 +11,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -186,7 +188,7 @@ private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5)
-                                    .clip(FloatingActionButtonDefaults.shape),
+                                    .clip(MaterialTheme.shapes.large),
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(photoUri)
                                     .crossfade(300)
