@@ -78,5 +78,8 @@ dependencies {
     val roomVersion = "2.5.2"
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     implementation(project(mapOf("path" to ":widget")))
 }
