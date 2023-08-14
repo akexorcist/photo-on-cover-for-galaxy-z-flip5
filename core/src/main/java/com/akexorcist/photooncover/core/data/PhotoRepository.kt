@@ -27,6 +27,7 @@ class DefaultPhotoRepository(
 
     override suspend fun addNewPhoto(originalUri: Uri): Boolean {
         val fileName = UUID.randomUUID().toString()
+        val order = dataSource.getLastOrder() + 1
         val uri: Uri = copyPhotoToInternalStorage(
             context = context,
             fileName = fileName,
@@ -35,6 +36,7 @@ class DefaultPhotoRepository(
         val photo = PhotoEntity(
             id = fileName,
             path = uri.toString(),
+            order = order,
         )
         dataSource.insert(photo = photo)
         return true

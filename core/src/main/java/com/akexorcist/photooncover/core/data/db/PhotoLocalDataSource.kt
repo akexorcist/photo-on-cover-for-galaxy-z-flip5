@@ -16,4 +16,7 @@ interface PhotoLocalDataSource {
 
     @Delete
     suspend fun delete(photo: PhotoEntity)
+
+    @Query("SELECT MAX(`order`) FROM photo")
+    suspend fun getLastOrder(): Int
 }
