@@ -2,6 +2,8 @@
 
 package com.akexorcist.photooncover.ui.feature.home
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,11 +39,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -52,22 +60,51 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.akexorcist.photooncover.R
+import com.akexorcist.photooncover.config.PhotoHeightForGalaxyZFlip5
 import com.akexorcist.photooncover.config.PhotoRatioForGalaxyZFlip5
+import com.akexorcist.photooncover.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @Composable
 fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
     val uiState by viewModel.uiState.collectAsState(initial = HomeUiState(listOf()))
+    var photoToAddUri: Uri? by remember { mutableStateOf(null) }
+
+    val cropPhotoLauncher = rememberLauncherForActivityResult(
+        contract = CropImageContract(),
+        onResult = { result -> result.uriContent?.let { viewModel.addPhoto(it) } },
+    )
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = {
-            it?.let { uri ->
-                viewModel.addPhoto(uri)
-            }
-        },
+        onResult = { uri -> uri?.let { photoToAddUri = it } },
     )
+    LaunchedEffect(photoToAddUri) {
+        // Wait for photo picker complete collapse animation
+        if (photoToAddUri == null) return@LaunchedEffect
+        delay(500)
+        cropPhotoLauncher.launch(
+            CropImageContractOptions(
+                uri = photoToAddUri,
+                cropImageOptions = CropImageOptions(
+                    fixAspectRatio = true,
+                    aspectRatioX = PhotoWidthForGalaxyZFlip5,
+                    aspectRatioY = PhotoHeightForGalaxyZFlip5,
+                    outputRequestWidth = PhotoWidthForGalaxyZFlip5,
+                    outputRequestHeight = PhotoHeightForGalaxyZFlip5,
+                    backgroundColor = Color.Black.copy(alpha = 0.75f).toArgb(),
+                    activityBackgroundColor = Color.Black.toArgb(),
+                    outputCompressFormat = Bitmap.CompressFormat.JPEG,
+                )
+            )
+        )
+        photoToAddUri = null
+    }
     HomeScreen(
         uiState = uiState,
         onAddPhotoClick = {
@@ -222,7 +259,7 @@ private fun InfiniteBounceAnimation(
             animation = tween(1000),
             repeatMode = RepeatMode.Reverse,
         ),
-        label = "infinite_bounce_animation"
+        label = "infinite_bounce_animation",
     )
     Box(modifier = Modifier.offset(y = position.dp)) {
         content()
@@ -248,7 +285,7 @@ private fun HomeFloatingActionButton(
 @Composable
 fun HomeScreenPreview() {
     val uiState = HomeUiState(photos = listOf())
-    PhotoOnCoverTheme {
+    PhotoOnCoverTheme(darkTheme = true) {
         HomeScreen(
             uiState = uiState,
             onAddPhotoClick = {},

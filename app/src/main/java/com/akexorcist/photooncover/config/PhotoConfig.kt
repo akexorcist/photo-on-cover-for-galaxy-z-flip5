@@ -1,3 +1,5 @@
 package com.akexorcist.photooncover.config
 
-const val PhotoRatioForGalaxyZFlip5 = 748f / 654f
+const val PhotoWidthForGalaxyZFlip5 = 748
+const val PhotoHeightForGalaxyZFlip5 = 654
+const val PhotoRatioForGalaxyZFlip5 = PhotoWidthForGalaxyZFlip5.toFloat() / PhotoHeightForGalaxyZFlip5.toFloat()
