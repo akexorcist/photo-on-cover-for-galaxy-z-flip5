@@ -2,6 +2,9 @@
 
 package com.akexorcist.photooncover.ui.feature.home
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -24,7 +27,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -32,7 +34,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,16 +53,30 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.akexorcist.photooncover.R
 import com.akexorcist.photooncover.config.PhotoRatioForGalaxyZFlip5
-import com.akexorcist.photooncover.data.PhotoData
+import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
 import org.koin.compose.koinInject
 
 @Composable
 fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState(initial = HomeUiState(listOf()))
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            it?.let { uri ->
+                viewModel.addPhoto(uri)
+            }
+        },
+    )
     HomeScreen(
         uiState = uiState,
-        onAddPhotoClick = {},
+        onAddPhotoClick = {
+            photoPickerLauncher.launch(
+                PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        },
         onInstructionClick = {},
     )
 }
@@ -138,7 +154,9 @@ private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
                                     .clip(FloatingActionButtonDefaults.shape),
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(photo.path)
+                                    .crossfade(300)
                                     .build(),
+                                contentScale = ContentScale.Crop,
                                 contentDescription = null,
                             )
                         }
