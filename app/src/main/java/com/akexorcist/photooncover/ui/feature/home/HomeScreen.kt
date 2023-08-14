@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -84,6 +85,7 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri -> uri?.let { photoToAddUri = it } },
     )
+    val colorScheme = MaterialTheme.colorScheme
     LaunchedEffect(photoToAddUri) {
         // Wait for photo picker complete collapse animation
         if (photoToAddUri == null) return@LaunchedEffect
@@ -91,16 +93,10 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
         cropPhotoLauncher.launch(
             CropImageContractOptions(
                 uri = photoToAddUri,
-                cropImageOptions = CropImageOptions(
-                    fixAspectRatio = true,
-                    aspectRatioX = PhotoWidthForGalaxyZFlip5,
-                    aspectRatioY = PhotoHeightForGalaxyZFlip5,
-                    outputRequestWidth = PhotoWidthForGalaxyZFlip5,
-                    outputRequestHeight = PhotoHeightForGalaxyZFlip5,
-                    backgroundColor = Color.Black.copy(alpha = 0.75f).toArgb(),
-                    activityBackgroundColor = Color.Black.toArgb(),
-                    outputCompressFormat = Bitmap.CompressFormat.JPEG,
-                )
+                cropImageOptions = cropImageOption(
+                    cropGuidelineColor = Color.White,
+                    colorScheme = colorScheme,
+                ),
             )
         )
         photoToAddUri = null
@@ -126,11 +122,7 @@ fun HomeScreen(
 ) {
     val photos = uiState.photos
     Scaffold(
-        topBar = {
-            HomeTopBar(
-                onInstructionClick = onInstructionClick,
-            )
-        },
+        topBar = { HomeTopBar(onInstructionClick = onInstructionClick) },
         floatingActionButton = { HomeFloatingActionButton(onClick = onAddPhotoClick) },
         floatingActionButtonPosition = FabPosition.Center,
     ) { padding ->
@@ -219,7 +211,7 @@ private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
                     painter = painterResource(R.drawable.ic_empty),
                     contentDescription = "Empty photo",
                 )
-                Spacer(modifier = Modifier.size(4.dp))
+                Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     textAlign = TextAlign.Center,
                     text = "Your photo on cover\nis empty",
@@ -231,7 +223,7 @@ private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
                 InfiniteBounceAnimation {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Add your first photo here",
+                            text = "Add your first photo",
                             fontWeight = FontWeight.Bold,
                         )
                         Icon(
@@ -283,7 +275,7 @@ private fun HomeFloatingActionButton(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     val uiState = HomeUiState(photos = listOf())
     PhotoOnCoverTheme(darkTheme = true) {
         HomeScreen(
@@ -293,3 +285,27 @@ fun HomeScreenPreview() {
         )
     }
 }
+
+private fun cropImageOption(
+    cropGuidelineColor: Color,
+    colorScheme: ColorScheme,
+) = CropImageOptions(
+    fixAspectRatio = true,
+    aspectRatioX = PhotoWidthForGalaxyZFlip5,
+    aspectRatioY = PhotoHeightForGalaxyZFlip5,
+    outputRequestWidth = PhotoWidthForGalaxyZFlip5,
+    outputRequestHeight = PhotoHeightForGalaxyZFlip5,
+    backgroundColor = colorScheme.background.copy(alpha = 0.75f).toArgb(),
+    activityBackgroundColor = colorScheme.background.toArgb(),
+    outputCompressFormat = Bitmap.CompressFormat.JPEG,
+    cropperLabelTextColor = colorScheme.onPrimaryContainer.toArgb(),
+    activityMenuIconColor = colorScheme.onPrimaryContainer.toArgb(),
+    activityMenuTextColor = colorScheme.onPrimaryContainer.toArgb(),
+    toolbarBackButtonColor = colorScheme.onPrimaryContainer.toArgb(),
+    toolbarTitleColor = colorScheme.onPrimaryContainer.toArgb(),
+    toolbarColor = colorScheme.primaryContainer.toArgb(),
+    progressBarColor = colorScheme.primary.toArgb(),
+    guidelinesColor = cropGuidelineColor.toArgb(),
+    borderCornerColor = cropGuidelineColor.toArgb(),
+    borderLineColor = cropGuidelineColor.toArgb(),
+)
