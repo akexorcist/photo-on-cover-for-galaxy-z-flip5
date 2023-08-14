@@ -15,6 +15,8 @@ interface PhotoRepository {
     fun getPhotos(): Flow<List<PhotoData>>
 
     suspend fun addNewPhoto(uri: Uri, extension: String): Boolean
+
+    suspend fun changePhotoOrder(fromOrder: Int, toOrder: Int)
 }
 
 class DefaultPhotoRepository(
@@ -45,6 +47,18 @@ class DefaultPhotoRepository(
         )
         dataSource.insert(photo = photo)
         return true
+    }
+
+    override suspend fun changePhotoOrder(fromOrder: Int, toOrder: Int) {
+        dataSource.getPhoto(order = fromOrder)?.let { photo ->
+            val currentOrder: Int = photo.order
+            if (currentOrder > toOrder) {
+                dataSource.shiftPhotoOrderUp(toOrder, currentOrder - 1)
+            } else {
+                dataSource.shiftPhotoOrderDown(currentOrder + 1, toOrder)
+            }
+            dataSource.updatePhotoOrder(photo.id, toOrder)
+        }
     }
 
     private fun copyPhotoToInternalStorage(context: Context, fileName: String, extension: String, uri: Uri): Uri? {

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PhotoLocalDataSource {
-    @Query("SELECT * FROM photo")
+    @Query("SELECT * FROM photo ORDER BY `order` ASC")
     fun getAll(): Flow<List<PhotoEntity>>
 
     @Insert
@@ -19,4 +19,16 @@ interface PhotoLocalDataSource {
 
     @Query("SELECT MAX(`order`) FROM photo")
     suspend fun getLastOrder(): Int
+
+    @Query("SELECT * FROM photo WHERE `order` = :order")
+    suspend fun getPhoto(order: Int): PhotoEntity?
+
+    @Query("UPDATE photo SET `order` = :newOrder WHERE `id` = :id")
+    suspend fun updatePhotoOrder(id: String?, newOrder: Int)
+
+    @Query("UPDATE photo SET `order` = `order` + 1 WHERE `order` >= :startOrder AND `order` <= :endOrder")
+    suspend fun shiftPhotoOrderUp(startOrder: Int, endOrder: Int)
+
+    @Query("UPDATE photo SET `order` = `order` - 1 WHERE `order` >= :startOrder AND `order` <= :endOrder")
+    suspend fun shiftPhotoOrderDown(startOrder: Int, endOrder: Int)
 }

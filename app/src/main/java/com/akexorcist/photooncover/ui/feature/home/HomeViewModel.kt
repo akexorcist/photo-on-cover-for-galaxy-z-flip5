@@ -34,4 +34,8 @@ class HomeViewModel(
             photoRepository.addNewPhoto(uri, extension)
         }
     }
+
+    fun movePhoto(fromPosition: Int, toPosition: Int) = viewModelScope.launch {
+        photoRepository.changePhotoOrder(fromPosition + 1, toPosition + 1)
+    }
 }

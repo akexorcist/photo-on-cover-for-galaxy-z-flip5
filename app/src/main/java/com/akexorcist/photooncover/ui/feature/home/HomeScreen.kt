@@ -2,16 +2,17 @@ package com.akexorcist.photooncover.ui.feature.home
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -56,6 +58,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -71,6 +74,10 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import kotlinx.coroutines.delay
+import org.burnoutcrew.reorderable.ReorderableItem
+import org.burnoutcrew.reorderable.detectReorderAfterLongPress
+import org.burnoutcrew.reorderable.rememberReorderableLazyGridState
+import org.burnoutcrew.reorderable.reorderable
 import org.koin.compose.koinInject
 import java.io.File
 
@@ -117,6 +124,12 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
             )
         },
         onInstructionClick = {},
+        onPhotoMoved = { fromPosition, toPosition ->
+            viewModel.movePhoto(
+                fromPosition = fromPosition,
+                toPosition = toPosition,
+            )
+        },
     )
 }
 
@@ -125,8 +138,14 @@ fun HomeScreen(
     uiState: HomeUiState,
     onAddPhotoClick: () -> Unit,
     onInstructionClick: () -> Unit,
+    onPhotoMoved: (Int, Int) -> Unit,
 ) {
     val photos = uiState.photos
+    LaunchedEffect(photos) {
+        photos.forEach {
+            Log.e("Check", "Photo: $it")
+        }
+    }
     Scaffold(
         topBar = { HomeTopBar(onInstructionClick = onInstructionClick) },
         floatingActionButton = { HomeFloatingActionButton(onClick = onAddPhotoClick) },
@@ -135,6 +154,7 @@ fun HomeScreen(
         HomeContent(
             padding = padding,
             photos = photos,
+            onPhotoMoved = onPhotoMoved,
         )
     }
 }
@@ -174,28 +194,36 @@ private fun HomeTopBar(
 }
 
 @Composable
-private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
+private fun HomeContent(
+    padding: PaddingValues,
+    photos: List<PhotoData>,
+    onPhotoMoved: (Int, Int) -> Unit,
+) {
     val context = LocalContext.current
+    val state = rememberReorderableLazyGridState(
+        onMove = { from, to -> onPhotoMoved(from.index, to.index) },
+    )
     Box(modifier = Modifier.padding(padding)) {
         if (photos.isNotEmpty()) {
             LazyVerticalGrid(
+                modifier = Modifier
+                    .reorderable(state)
+                    .fillMaxSize()
+                    .detectReorderAfterLongPress(state),
                 columns = GridCells.Fixed(2),
+                state = state.gridState,
                 content = {
-                    items(count = photos.size) { position ->
-                        photos.getOrNull(position)?.fileName?.let { path ->
-                            val photoUri = File(FileUtility.getPhotoDirectory(context), path)
-                            AsyncImage(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5)
-                                    .clip(MaterialTheme.shapes.large),
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(photoUri)
-                                    .crossfade(300)
-                                    .build(),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
+                    itemsIndexed(
+                        items = photos,
+                        key = { _, item -> item.id },
+                    ) { index: Int, photo: PhotoData ->
+                        ReorderableItem(state, photo.id) { isDragging ->
+                            val elevation by animateDpAsState(
+                                targetValue = if (isDragging) 16.dp else 0.dp,
+                                label = "photo_elevation_animation_at_$index"
                             )
+                            val photoFile = File(FileUtility.getPhotoDirectory(context), photo.fileName)
+                            PhotoItem(elevation, photoFile)
                         }
                     }
                 },
@@ -248,6 +276,27 @@ private fun HomeContent(padding: PaddingValues, photos: List<PhotoData>) {
 }
 
 @Composable
+private fun PhotoItem(
+    elevation: Dp,
+    photoFile: File,
+) {
+    Box(modifier = Modifier.shadow(elevation)) {
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5)
+                .clip(MaterialTheme.shapes.large),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(photoFile)
+                .crossfade(300)
+                .build(),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
 private fun InfiniteBounceAnimation(
     content: @Composable () -> Unit,
 ) {
@@ -290,6 +339,7 @@ private fun HomeScreenPreview() {
             uiState = uiState,
             onAddPhotoClick = {},
             onInstructionClick = {},
+            onPhotoMoved = { _, _ -> },
         )
     }
 }
