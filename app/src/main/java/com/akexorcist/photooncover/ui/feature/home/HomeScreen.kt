@@ -107,7 +107,10 @@ private fun HomeTopBar(
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = onInstructionClick) {
+        IconButton(
+            modifier = Modifier.size(48.dp),
+            onClick = onInstructionClick,
+        ) {
             Icon(
                 modifier = Modifier.size(32.dp),
                 painter = painterResource(R.drawable.ic_instruction),
