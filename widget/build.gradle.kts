@@ -24,6 +24,9 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    buildFeatures {
+        compose = true
+    }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.8"
     }
@@ -42,6 +45,9 @@ dependencies {
     implementation("androidx.glance:glance-material:1.0.0-rc01")
     implementation("androidx.glance:glance-material3:1.0.0-rc01")
     implementation("androidx.startup:startup-runtime:1.1.1")
+
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.compose.material3:material3:1.1.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

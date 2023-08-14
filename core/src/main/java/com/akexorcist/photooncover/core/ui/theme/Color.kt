@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.theme
+package com.akexorcist.photooncover.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

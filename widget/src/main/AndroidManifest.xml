@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <application>
         <receiver
             android:name=".PhotoWidgetReceiver"
@@ -19,5 +20,15 @@
                 android:name="com.samsung.android.sdk.subscreen.widget.support_visibility_callback"
                 android:value="true" />
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.akexorcist.photooncover.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/widget_file_path" />
+        </provider>
     </application>
 </manifest>

@@ -1,17 +1,27 @@
 package com.akexorcist.photooncover.widget
 
+import android.net.Uri
 import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.glance.Button
+import androidx.glance.ButtonDefaults
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.ImageProvider
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -26,7 +36,10 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
+import com.akexorcist.photooncover.core.data.PhotoData
+import com.akexorcist.photooncover.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.core.utility.FileUtility
+import java.io.File
 
 @Suppress("PrivatePropertyName")
 private val BottomBarWidth = 192.dp
@@ -35,49 +48,70 @@ private val BottomBarWidth = 192.dp
 private val BottomBarHeight = 31.dp
 
 @Composable
-fun PhotoRoute(photoViewModel: PhotoViewModel) {
+fun PhotoRoute(photoViewModel: PhotoViewModel, widgetNavigation: WidgetNavigation) {
     val uiState by photoViewModel.uiState.collectAsState()
     val isPreviousPhotoAvailable = uiState.currentIndex > 0
     val isNextPhotoAvailable = uiState.currentIndex < uiState.photos.size - 1
-    val currentPhoto = uiState.photos.getOrNull(uiState.currentIndex)
+    val photo = uiState.photos.getOrNull(uiState.currentIndex)
+    val context = LocalContext.current
 
     PhotoScreen(
-        photo = currentPhoto,
+        photo = photo,
         isPreviousPhotoAvailable = isPreviousPhotoAvailable,
         isNextPhotoAvailable = isNextPhotoAvailable,
         onPreviousPhotoClick = { photoViewModel.previousPhoto() },
         onNextPhotoClick = { photoViewModel.nextPhoto() },
+        onOpenAppClick = { widgetNavigation.navigateToMain(context) },
+        onReloadClick = { actionRunCallback(ReloadWidgetCallback::class.java) },
     )
+
+    LaunchedEffect(Unit) { photoViewModel.observePhotos() }
 }
 
 @Composable
 fun PhotoScreen(
-    photo: PhotoType?,
+    photo: PhotoData?,
     isPreviousPhotoAvailable: Boolean,
     isNextPhotoAvailable: Boolean,
     onPreviousPhotoClick: () -> Unit,
     onNextPhotoClick: () -> Unit,
+    onOpenAppClick: () -> Unit,
+    onReloadClick: () -> Unit,
 ) {
-    val resourceId = when (photo) {
-        is PhotoType.Sample -> R.drawable.ic_qr_sample
-        else -> null
-    }
-    if (resourceId != null) {
-        PhotoContent(
-            resourceId = resourceId,
-            isPreviousPhotoAvailable = isPreviousPhotoAvailable,
-            isNextPhotoAvailable = isNextPhotoAvailable,
-            onPreviousPhotoClick = onPreviousPhotoClick,
-            onNextPhotoClick = onNextPhotoClick,
-        )
-    } else {
-        NoPhotoAvailable()
-    }
+    Log.e("Check", "Path ${photo?.path}")
+    val context = LocalContext.current
+    photo?.path
+        ?.let { path ->
+            FileProvider.getUriForFile(
+                LocalContext.current,
+                "com.akexorcist.photooncover.fileprovider",
+                File(FileUtility.getPhotoDirectory(context), path),
+            )
+        }
+//        ?.let { path ->
+//            Uri.fromFile(File(FileUtility.getPhotoDirectory(context), path))
+//        }
+        ?.let { photoUri ->
+            Log.e("Check", "Photo URI $photoUri")
+            PhotoContent(
+                photoUri = photoUri,
+                isPreviousPhotoAvailable = isPreviousPhotoAvailable,
+                isNextPhotoAvailable = isNextPhotoAvailable,
+                onPreviousPhotoClick = onPreviousPhotoClick,
+                onNextPhotoClick = onNextPhotoClick,
+            )
+        }
+        ?: run {
+            NoPhotoAvailable(
+                onOpenAppClick = onOpenAppClick,
+                onReloadClick = onReloadClick,
+            )
+        }
 }
 
 @Composable
 private fun PhotoContent(
-    resourceId: Int,
+    photoUri: Uri,
     isPreviousPhotoAvailable: Boolean,
     isNextPhotoAvailable: Boolean,
     onPreviousPhotoClick: () -> Unit,
@@ -86,7 +120,7 @@ private fun PhotoContent(
     Column {
         PhotoCard(
             modifier = GlanceModifier.defaultWeight(),
-            imageResourceId = resourceId,
+            photoUri = photoUri,
         )
         BottomBar(
             isPreviousPhotoAvailable = isPreviousPhotoAvailable,
@@ -108,7 +142,7 @@ private fun BottomBar(
         modifier = GlanceModifier
             .fillMaxWidth()
             .height(BottomBarHeight)
-            .background(Color.Black)
+            .background(GlanceTheme.colors.background)
     ) {
         Row(
             modifier = GlanceModifier
@@ -117,7 +151,11 @@ private fun BottomBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = GlanceModifier.width(56.dp).height(BottomBarHeight)) {
+            Box(
+                modifier = GlanceModifier
+                    .width(56.dp)
+                    .height(BottomBarHeight)
+            ) {
                 if (isPreviousPhotoAvailable) {
                     ImageButton(
                         provider = ImageProvider(R.drawable.ic_backward),
@@ -140,24 +178,48 @@ private fun BottomBar(
 }
 
 @Composable
-fun NoPhotoAvailable() {
+fun NoPhotoAvailable(
+    onOpenAppClick: () -> Unit,
+    onReloadClick: () -> Unit,
+) {
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(Color.Black),
+            .background(GlanceTheme.colors.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = "No photo available", style = TextStyle(color = ColorProvider(Color.White)))
+        Text(
+            text = "No photo available",
+            style = TextStyle(
+                color = GlanceTheme.colors.onBackground,
+            )
+        )
         Spacer(modifier = GlanceModifier.size(16.dp))
-        Button(text = "Select from app", onClick = { Log.e("Check", "Open app") })
+        Button(
+            text = "Select from app",
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = GlanceTheme.colors.primary,
+                contentColor = GlanceTheme.colors.onPrimary,
+            ),
+            onClick = onOpenAppClick,
+        )
+        Spacer(modifier = GlanceModifier.size(16.dp))
+        Button(
+            text = "Reload",
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = GlanceTheme.colors.primary,
+                contentColor = GlanceTheme.colors.onPrimary,
+            ),
+            onClick = onReloadClick,
+        )
     }
 }
 
 @Composable
 private fun PhotoCard(
     modifier: GlanceModifier = GlanceModifier,
-    @DrawableRes imageResourceId: Int,
+    photoUri: Uri,
 ) {
 
     Box(
@@ -171,9 +233,8 @@ private fun PhotoCard(
                 .padding(32.dp),
             contentAlignment = Alignment.Center,
         ) {
-
             Image(
-                provider = ImageProvider(imageResourceId),
+                provider = ImageProvider(photoUri),
                 contentDescription = null,
             )
         }

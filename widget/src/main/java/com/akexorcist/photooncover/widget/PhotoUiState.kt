@@ -1,10 +1,8 @@
 package com.akexorcist.photooncover.widget
 
+import com.akexorcist.photooncover.core.data.PhotoData
+
 data class PhotoUiState(
     val currentIndex: Int,
-    val photos: List<PhotoType>,
+    val photos: List<PhotoData>,
 )
-
-sealed class PhotoType {
-    object Sample : PhotoType()
-}

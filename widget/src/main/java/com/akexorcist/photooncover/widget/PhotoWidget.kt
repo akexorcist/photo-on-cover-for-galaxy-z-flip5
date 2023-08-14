@@ -6,8 +6,13 @@ import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
+import com.akexorcist.photooncover.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.widget.theme.PhotoWidgetTheme
 
-class PhotoWidget(private val photoViewModel: PhotoViewModel) : GlanceAppWidget() {
+class PhotoWidget(
+    private val photoViewModel: PhotoViewModel,
+    private val widgetNavigation: WidgetNavigation,
+) : GlanceAppWidget() {
     private var lastGlanceId: GlanceId? = null
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -15,8 +20,11 @@ class PhotoWidget(private val photoViewModel: PhotoViewModel) : GlanceAppWidget(
         provideContent {
             if (lastGlanceId == null || lastGlanceId != id) {
                 lastGlanceId = id
-                GlanceTheme {
-                    PhotoRoute(photoViewModel = photoViewModel)
+                PhotoWidgetTheme {
+                    PhotoRoute(
+                        photoViewModel = photoViewModel,
+                        widgetNavigation = widgetNavigation,
+                    )
                 }
             }
         }

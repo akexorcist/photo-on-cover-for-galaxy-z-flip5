@@ -14,17 +14,25 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.akexorcist.photooncover.core.ui.theme.Pink40
+import com.akexorcist.photooncover.core.ui.theme.Pink80
+import com.akexorcist.photooncover.core.ui.theme.Purple40
+import com.akexorcist.photooncover.core.ui.theme.Purple80
+import com.akexorcist.photooncover.core.ui.theme.PurpleGrey40
+import com.akexorcist.photooncover.core.ui.theme.PurpleGrey80
 
+@Suppress("PrivatePropertyName")
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
 )
 
+@Suppress("PrivatePropertyName")
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
-    tertiary = Pink40
+    tertiary = Pink40,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -45,7 +53,7 @@ fun PhotoOnCoverTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicColor -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
