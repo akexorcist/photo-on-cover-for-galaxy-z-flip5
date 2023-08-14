@@ -9,12 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
+import androidx.glance.TintColorFilterParams
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.background
@@ -142,6 +144,7 @@ private fun BottomBar(
                     ImageButton(
                         provider = ImageProvider(R.drawable.ic_backward),
                         onClick = { onPreviousPhotoClick() },
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
                     )
                 }
             }
@@ -151,6 +154,7 @@ private fun BottomBar(
                     ImageButton(
                         provider = ImageProvider(R.drawable.ic_forward),
                         onClick = { onNextPhotoClick() },
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
                     )
                 }
             }
@@ -234,7 +238,8 @@ private fun PhotoCard(
 @Composable
 private fun ImageButton(
     provider: ImageProvider,
-    onClick: () -> Unit,
+    colorFilter: ColorFilter?,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = GlanceModifier
@@ -246,6 +251,7 @@ private fun ImageButton(
             modifier = GlanceModifier.size(20.dp),
             provider = provider,
             contentDescription = null,
+            colorFilter = colorFilter,
         )
     }
 }
