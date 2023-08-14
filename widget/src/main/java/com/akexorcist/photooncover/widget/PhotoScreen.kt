@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.widget
+package com.akexorcist.photooncover.widget
 
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -27,7 +27,6 @@ import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.akexorcist.photooncover.R
 
 @Suppress("PrivatePropertyName")
 private val BottomBarWidth = 192.dp
@@ -46,12 +45,8 @@ fun PhotoRoute(photoViewModel: PhotoViewModel) {
         photo = currentPhoto,
         isPreviousPhotoAvailable = isPreviousPhotoAvailable,
         isNextPhotoAvailable = isNextPhotoAvailable,
-        onPreviousPhotoClick = {
-            photoViewModel.previousPhoto()
-        },
-        onNextPhotoClick = {
-            photoViewModel.nextPhoto()
-        },
+        onPreviousPhotoClick = { photoViewModel.previousPhoto() },
+        onNextPhotoClick = { photoViewModel.nextPhoto() },
     )
 }
 

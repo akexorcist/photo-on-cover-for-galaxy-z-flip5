@@ -32,25 +32,6 @@
                 android:name="com.akexorcist.photooncover.startup.DependencyInjectionInitializer"
                 android:value="androidx.startup" />
         </provider>
-
-        <receiver
-            android:name=".ui.feature.widget.PhotoWidgetReceiver"
-            android:exported="true"
-            android:label="Photo">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/photo_widget_info" />
-            <meta-data
-                android:name="com.samsung.android.appwidget.provider"
-                android:resource="@xml/samsung_widget_cover_info" />
-            <meta-data
-                android:name="com.samsung.android.sdk.subscreen.widget.support_visibility_callback"
-                android:value="true" />
-        </receiver>
     </application>
 
 </manifest>

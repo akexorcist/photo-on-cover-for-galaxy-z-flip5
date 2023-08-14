@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.widget
+package com.akexorcist.photooncover.widget
 
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver

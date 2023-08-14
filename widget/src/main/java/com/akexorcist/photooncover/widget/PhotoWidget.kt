@@ -1,7 +1,6 @@
-package com.akexorcist.photooncover.ui.feature.widget
+package com.akexorcist.photooncover.widget
 
 import android.content.Context
-import android.util.Log
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
@@ -17,7 +16,6 @@ class PhotoWidget(private val photoViewModel: PhotoViewModel) : GlanceAppWidget(
             if (lastGlanceId == null || lastGlanceId != id) {
                 lastGlanceId = id
                 GlanceTheme {
-                    Log.e("Check", "PhotoRoute $id")
                     PhotoRoute(photoViewModel = photoViewModel)
                 }
             }

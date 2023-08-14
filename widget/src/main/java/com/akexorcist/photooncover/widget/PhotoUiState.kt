@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.widget
+package com.akexorcist.photooncover.widget
 
 data class PhotoUiState(
     val currentIndex: Int,

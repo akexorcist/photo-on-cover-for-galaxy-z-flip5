@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Photo on Cover"
 include(":app")
- 
+include(":widget")

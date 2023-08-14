@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.widget
+package com.akexorcist.photooncover.widget
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
