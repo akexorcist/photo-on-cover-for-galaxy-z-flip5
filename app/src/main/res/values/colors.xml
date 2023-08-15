@@ -11,4 +11,5 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="primary">@color/purple_40</color>
+    <color name="ic_launcher_background">#9FA8DA</color>
 </resources>
