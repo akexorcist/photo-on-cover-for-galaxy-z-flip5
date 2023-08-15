@@ -44,4 +44,7 @@ interface PhotoLocalDataSource {
         shiftPhotoOrderDown(startOrder, endOrder)
         updatePhotoOrder(id, newOrder)
     }
+
+    @Query("DELETE FROM photo WHERE id IN (:ids)")
+    suspend fun deletePhotosByIds(ids: List<String>)
 }

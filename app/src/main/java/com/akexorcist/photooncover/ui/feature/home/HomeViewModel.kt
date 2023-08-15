@@ -63,8 +63,10 @@ class HomeViewModel(
         _isDeleteMode.update { false }
     }
 
-    fun confirmDeletePhoto() {
-        // TODO
+    fun confirmDeletePhoto() = viewModelScope.launch {
+        val photos = _markedAsDeletePhotos.value
+        photoRepository.deletePhotos(photos)
+        _isDeleteMode.update { false }
     }
 
     fun selectPhotoToDelete(photo: PhotoData) {

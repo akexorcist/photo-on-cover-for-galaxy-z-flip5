@@ -17,6 +17,8 @@ interface PhotoRepository {
     suspend fun addNewPhoto(uri: Uri, extension: String): Boolean
 
     suspend fun changePhotoOrder(fromOrder: Int, toOrder: Int)
+
+    suspend fun deletePhotos(photos: List<PhotoData>)
 }
 
 class DefaultPhotoRepository(
@@ -69,6 +71,21 @@ class DefaultPhotoRepository(
                         endOrder = toOrder,
                     )
             }
+        }
+    }
+
+    override suspend fun deletePhotos(photos: List<PhotoData>) {
+        dataSource.deletePhotosByIds(photos.map { it.id })
+        photos.forEach { photo ->
+            deletePhotoInInternalStorage(context, photo.fileName)
+        }
+    }
+
+    private fun deletePhotoInInternalStorage(context: Context, fileNameWithExtension: String) {
+        val directory = FileUtility.getPhotoDirectory(context)
+        val file = File(directory, fileNameWithExtension)
+        if (file.exists()) {
+            file.delete()
         }
     }
 
