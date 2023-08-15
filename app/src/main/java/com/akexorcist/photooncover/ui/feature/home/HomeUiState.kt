@@ -4,4 +4,5 @@ import com.akexorcist.photooncover.core.data.PhotoData
 
 data class HomeUiState(
     val photos: List<PhotoData>,
+    val isDeleteMode: Boolean,
 )
