@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.core.data.PhotoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,25 +16,25 @@ class HomeViewModel(
     private val photoRepository: PhotoRepository
 ) : ViewModel() {
 
-    private val _isEditing = MutableStateFlow(false)
+    private val _isDeleteMode = MutableStateFlow(false)
+    private val _markedAsDeletePhotos: MutableStateFlow<List<PhotoData>> = MutableStateFlow(listOf())
 
-    val uiState: Flow<HomeUiState> = photoRepository.getPhotos().combine(_isEditing) { photos, isEditing ->
-        HomeUiState(
+    val uiState: Flow<HomeUiState> = photoRepository.getPhotos().combine(_isDeleteMode) { photos, isDeleteMode ->
+        HomeUiState.perform(
             photos = photos,
-            isDeleteMode = isEditing,
+            isDeleteMode = isDeleteMode,
+        )
+    }.combine(_markedAsDeletePhotos) { state, markedAsDeletePhotos ->
+        state.update(
+            state.photos.map { photo ->
+                photo.copy(
+                    markAsDelete = markedAsDeletePhotos.any { deletePhoto ->
+                        deletePhoto.id == photo.id
+                    }
+                )
+            }
         )
     }
-//    val uiState: Flow<HomeUiState> = photoRepository.getPhotos()
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5000L),
-//            initialValue = listOf(),
-//        ).map {
-//            HomeUiState(
-//                photos = it,
-//                isEditing = _isEditing.,
-//            )
-//        }
 
     fun addPhoto(uri: Uri, format: Bitmap.CompressFormat) = viewModelScope.launch {
         when (format) {
@@ -50,10 +51,27 @@ class HomeViewModel(
     }
 
     fun enterDeleteMode() {
-        _isEditing.update { true }
+        _isDeleteMode.update { true }
     }
 
-    fun exitDeleteMode() {
-        _isEditing.update { false }
+    fun exitWithoutPhotoDeletion() {
+        _isDeleteMode.update { false }
+        _markedAsDeletePhotos.update { listOf() }
+    }
+
+    fun exitWithPhotoDeletion() {
+        _isDeleteMode.update { false }
+    }
+
+    fun confirmDeletePhoto() {
+        // TODO
+    }
+
+    fun selectPhotoToDelete(photo: PhotoData) {
+        _markedAsDeletePhotos.update { it + photo }
+    }
+
+    fun unselectPhotoToDelete(photo: PhotoData) {
+        _markedAsDeletePhotos.update { it.filter { deletePhoto -> deletePhoto.id != photo.id } }
     }
 }

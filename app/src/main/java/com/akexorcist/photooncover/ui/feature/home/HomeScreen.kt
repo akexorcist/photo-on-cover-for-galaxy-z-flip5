@@ -2,7 +2,6 @@ package com.akexorcist.photooncover.ui.feature.home
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,7 +14,11 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +36,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -40,6 +44,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,7 +68,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.glance.appwidget.CheckBox
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.akexorcist.photooncover.R
@@ -72,6 +76,7 @@ import com.akexorcist.photooncover.core.config.PhotoRatioForGalaxyZFlip5
 import com.akexorcist.photooncover.core.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.core.utility.FileUtility
+import com.akexorcist.photooncover.core.utility.toPx
 import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -90,12 +95,7 @@ private val JpegCompressFormat = Bitmap.CompressFormat.JPEG
 
 @Composable
 fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
-    val uiState by viewModel.uiState.collectAsState(
-        initial = HomeUiState(
-            photos = listOf(),
-            isDeleteMode = false,
-        )
-    )
+    val uiState by viewModel.uiState.collectAsState(initial = HomeUiState.ViewMode(photos = listOf()))
     var photoToAddUri: Uri? by remember { mutableStateOf(null) }
 
     val cropPhotoLauncher = rememberLauncherForActivityResult(
@@ -133,7 +133,12 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
             )
         },
         onDeleteClick = { viewModel.enterDeleteMode() },
-        onPerformDeleteClick = { viewModel.exitDeleteMode() },
+        selectPhotoToDelete = { viewModel.selectPhotoToDelete(it) },
+        unselectPhotoToDelete = { viewModel.unselectPhotoToDelete(it) },
+        onExitDeleteModeClick = { viewModel.exitWithoutPhotoDeletion() },
+        onPerformPhotoDeletionClick = { viewModel.exitWithPhotoDeletion() },
+        onCancelDeleteClick = { viewModel.exitWithoutPhotoDeletion() },
+        onConfirmDeleteClick = { viewModel.confirmDeletePhoto() },
         onInstructionClick = {},
         onPhotoMoved = { fromPosition, toPosition ->
             viewModel.movePhoto(
@@ -149,35 +154,91 @@ fun HomeScreen(
     uiState: HomeUiState,
     onAddPhotoClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onPerformDeleteClick: () -> Unit,
+    selectPhotoToDelete: (PhotoData) -> Unit,
+    unselectPhotoToDelete: (PhotoData) -> Unit,
+    onExitDeleteModeClick: () -> Unit,
+    onPerformPhotoDeletionClick: () -> Unit,
+    onCancelDeleteClick: () -> Unit,
+    onConfirmDeleteClick: () -> Unit,
     onInstructionClick: () -> Unit,
     onPhotoMoved: (Int, Int) -> Unit,
 ) {
     val photos = uiState.photos
-    val isDeleteMode = uiState.isDeleteMode
-    LaunchedEffect(photos) {
-        photos.forEach {
-            Log.e("Check", "Photo: $it")
-        }
-    }
-    Scaffold(
-        topBar = {
-            HomeTopBar(
+    val isDeleteMode = uiState is HomeUiState.DeleteMode
+    val deleteCount = photos.count { photo -> photo.markAsDelete }
+    val showConfirmPhotoDeletion = !isDeleteMode && deleteCount > 0
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                HomeTopBar(
+                    isDeleteMode = isDeleteMode,
+                    onDeleteClick = onDeleteClick,
+                    onPerformPhotoDeletionClick = onPerformPhotoDeletionClick,
+                    onExitDeleteModeClick = onExitDeleteModeClick,
+                    onInstructionClick = onInstructionClick
+                )
+            },
+            floatingActionButton = { HomeFloatingActionButton(onClick = onAddPhotoClick) },
+            floatingActionButtonPosition = FabPosition.Center,
+        ) { padding ->
+            HomeContent(
+                padding = padding,
+                photos = photos,
                 isDeleteMode = isDeleteMode,
-                onDeleteClick = onDeleteClick,
-                onPerformDeleteClick = onPerformDeleteClick,
-                onInstructionClick = onInstructionClick
+                onPhotoMoved = onPhotoMoved,
+                selectPhotoToDelete = selectPhotoToDelete,
+                unselectPhotoToDelete = unselectPhotoToDelete,
             )
-        },
-        floatingActionButton = { HomeFloatingActionButton(onClick = onAddPhotoClick) },
-        floatingActionButtonPosition = FabPosition.Center,
-    ) { padding ->
-        HomeContent(
-            padding = padding,
-            photos = photos,
-            isDeleteMode = isDeleteMode,
-            onPhotoMoved = onPhotoMoved,
-        )
+        }
+        val verticalOffset = 20.dp.toPx().toInt()
+        AnimatedVisibility(
+            visible = showConfirmPhotoDeletion,
+            enter = fadeIn() + slideInVertically { verticalOffset },
+            exit = fadeOut() + slideOutVertically { verticalOffset },
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
+                    )
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) { },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = "Confirm to delete?",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(
+                    text = "$deleteCount photo will be delete",
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.size(32.dp))
+                OutlinedButton(
+                    modifier = Modifier.width(200.dp),
+                    onClick = onCancelDeleteClick,
+                ) {
+                    Text(text = "No, I changed my mind")
+                }
+                Spacer(modifier = Modifier.size(4.dp))
+                Button(
+                    modifier = Modifier.width(200.dp),
+                    onClick = onConfirmDeleteClick,
+                ) {
+                    Text(text = "Yes, delete it")
+                }
+            }
+        }
     }
 }
 
@@ -185,7 +246,8 @@ fun HomeScreen(
 private fun HomeTopBar(
     isDeleteMode: Boolean,
     onDeleteClick: () -> Unit,
-    onPerformDeleteClick: () -> Unit,
+    onPerformPhotoDeletionClick: () -> Unit,
+    onExitDeleteModeClick: () -> Unit,
     onInstructionClick: () -> Unit,
 ) {
     Row(
@@ -203,56 +265,86 @@ private fun HomeTopBar(
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.weight(1f))
-        Box(contentAlignment = Alignment.CenterEnd) {
-            androidx.compose.animation.AnimatedVisibility(
-                visible = !isDeleteMode,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Row {
-                    IconButton(
-                        modifier = Modifier.size(48.dp),
-                        onClick = onDeleteClick,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(R.drawable.ic_delete),
-                            contentDescription = "Delete",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
-                    IconButton(
-                        modifier = Modifier.size(48.dp),
-                        onClick = onInstructionClick,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(R.drawable.ic_instruction),
-                            contentDescription = "Instruction",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
-                }
-            }
-            androidx.compose.animation.AnimatedVisibility(
-                visible = isDeleteMode,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
+        HomeTopBarMenu(
+            isDeleteMode = isDeleteMode,
+            onDeleteClick = onDeleteClick,
+            onPerformPhotoDeletionClick = onPerformPhotoDeletionClick,
+            onExitDeleteModeClick = onExitDeleteModeClick,
+            onInstructionClick = onInstructionClick,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+    }
+}
+
+@Composable
+private fun HomeTopBarMenu(
+    isDeleteMode: Boolean,
+    onDeleteClick: () -> Unit,
+    onPerformPhotoDeletionClick: () -> Unit,
+    onExitDeleteModeClick: () -> Unit,
+    onInstructionClick: () -> Unit,
+) {
+    Box(contentAlignment = Alignment.CenterEnd) {
+        AnimatedVisibility(
+            visible = !isDeleteMode,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Row {
                 IconButton(
                     modifier = Modifier.size(48.dp),
-                    onClick = onPerformDeleteClick,
+                    onClick = onDeleteClick,
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_confirm),
-                        contentDescription = "Confirm",
+                        painter = painterResource(R.drawable.ic_delete),
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.size(48.dp),
+                    onClick = onInstructionClick,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.ic_instruction),
+                        contentDescription = "Instruction",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
             }
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        AnimatedVisibility(
+            visible = isDeleteMode,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Row {
+                IconButton(
+                    modifier = Modifier.size(48.dp),
+                    onClick = onExitDeleteModeClick,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.ic_cancel),
+                        contentDescription = "Exit delete mode",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.size(48.dp),
+                    onClick = onPerformPhotoDeletionClick,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.ic_confirm),
+                        contentDescription = "Perform photo deletion",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -262,6 +354,8 @@ private fun HomeContent(
     photos: List<PhotoData>,
     isDeleteMode: Boolean,
     onPhotoMoved: (Int, Int) -> Unit,
+    selectPhotoToDelete: (PhotoData) -> Unit,
+    unselectPhotoToDelete: (PhotoData) -> Unit,
 ) {
     val context = LocalContext.current
     val state = rememberReorderableLazyGridState(
@@ -282,18 +376,29 @@ private fun HomeContent(
                         key = { _, item -> item.id },
                     ) { index: Int, photo: PhotoData ->
                         val photoFile = File(FileUtility.getPhotoDirectory(context), photo.fileName)
-                        if (isDeleteMode) {
-                            Box {
-                                PhotoItem(0.dp, photoFile)
-                                Text(text = "Edit")
+                        when {
+                            isDeleteMode && !photo.markAsDelete -> {
+                                Box(modifier = Modifier.clickable { selectPhotoToDelete(photo) }) {
+                                    PhotoItem(0.dp, photoFile)
+                                    Text(text = "Unselected")
+                                }
                             }
-                        } else {
-                            ReorderableItem(state, photo.id) { isDragging ->
-                                val elevation by animateDpAsState(
-                                    targetValue = if (isDragging) 16.dp else 0.dp,
-                                    label = "photo_elevation_animation_at_$index"
-                                )
-                                PhotoItem(elevation, photoFile)
+
+                            isDeleteMode && photo.markAsDelete -> {
+                                Box(modifier = Modifier.clickable { unselectPhotoToDelete(photo) }) {
+                                    PhotoItem(0.dp, photoFile)
+                                    Text(text = "Selected")
+                                }
+                            }
+
+                            else -> {
+                                ReorderableItem(state, photo.id) { isDragging ->
+                                    val elevation by animateDpAsState(
+                                        targetValue = if (isDragging) 16.dp else 0.dp,
+                                        label = "photo_elevation_animation_at_$index"
+                                    )
+                                    PhotoItem(elevation, photoFile)
+                                }
                             }
                         }
                     }
@@ -404,16 +509,20 @@ private fun HomeFloatingActionButton(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    val uiState = HomeUiState(
+    val uiState = HomeUiState.ViewMode(
         photos = listOf(),
-        isDeleteMode = false,
     )
     PhotoOnCoverTheme(darkTheme = true) {
         HomeScreen(
             uiState = uiState,
             onAddPhotoClick = {},
             onDeleteClick = {},
-            onPerformDeleteClick = {},
+            selectPhotoToDelete = {},
+            unselectPhotoToDelete = {},
+            onPerformPhotoDeletionClick = {},
+            onExitDeleteModeClick = {},
+            onCancelDeleteClick = {},
+            onConfirmDeleteClick = {},
             onInstructionClick = {},
             onPhotoMoved = { _, _ -> },
         )
