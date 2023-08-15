@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.PhotoOnCover" parent="Theme.AppCompat.NoActionBar" />
+    <style name="Theme.PhotoOnCover" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowSplashScreenBackground">@color/splashscreen_background</item>
+    </style>
 
     <style name="Theme.PhotoOnCover.Crop" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:statusBarColor">@color/primary</item>

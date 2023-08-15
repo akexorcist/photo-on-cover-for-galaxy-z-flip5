@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.glance:glance-material:1.0.0-rc01")
     implementation("androidx.glance:glance-material3:1.0.0-rc01")
     implementation("androidx.startup:startup-runtime:1.1.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("com.vanniktech:android-image-cropper:4.5.0")
