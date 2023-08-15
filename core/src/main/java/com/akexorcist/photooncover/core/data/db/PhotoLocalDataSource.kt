@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,4 +32,16 @@ interface PhotoLocalDataSource {
 
     @Query("UPDATE photo SET `order` = `order` - 1 WHERE `order` >= :startOrder AND `order` <= :endOrder")
     suspend fun shiftPhotoOrderDown(startOrder: Int, endOrder: Int)
+
+    @Transaction
+    suspend fun updatePhotoOrderAndShiftUp(id: String, newOrder: Int, startOrder: Int, endOrder: Int) {
+        shiftPhotoOrderUp(startOrder, endOrder)
+        updatePhotoOrder(id, newOrder)
+    }
+
+    @Transaction
+    suspend fun updatePhotoOrderAndShiftDown(id: String, newOrder: Int, startOrder: Int, endOrder: Int) {
+        shiftPhotoOrderDown(startOrder, endOrder)
+        updatePhotoOrder(id, newOrder)
+    }
 }

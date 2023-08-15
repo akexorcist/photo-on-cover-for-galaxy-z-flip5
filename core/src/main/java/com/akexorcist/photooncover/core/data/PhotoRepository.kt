@@ -52,12 +52,23 @@ class DefaultPhotoRepository(
     override suspend fun changePhotoOrder(fromOrder: Int, toOrder: Int) {
         dataSource.getPhoto(order = fromOrder)?.let { photo ->
             val currentOrder: Int = photo.order
-            if (currentOrder > toOrder) {
-                dataSource.shiftPhotoOrderUp(toOrder, currentOrder - 1)
-            } else {
-                dataSource.shiftPhotoOrderDown(currentOrder + 1, toOrder)
+            when {
+                currentOrder > toOrder ->
+                    dataSource.updatePhotoOrderAndShiftUp(
+                        id = photo.id,
+                        newOrder = toOrder,
+                        startOrder = toOrder,
+                        endOrder = currentOrder - 1,
+                    )
+
+                currentOrder < toOrder ->
+                    dataSource.updatePhotoOrderAndShiftDown(
+                        id = photo.id,
+                        newOrder = toOrder,
+                        startOrder = currentOrder + 1,
+                        endOrder = toOrder,
+                    )
             }
-            dataSource.updatePhotoOrder(photo.id, toOrder)
         }
     }
 
