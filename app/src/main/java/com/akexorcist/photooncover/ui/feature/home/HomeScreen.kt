@@ -63,6 +63,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -210,32 +212,36 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Confirm to delete?",
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                    text = pluralStringResource(id = R.plurals.confirm_deletion_title, deleteCount, deleteCount),
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
-                    text = "$deleteCount photo will be delete",
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                    text = stringResource(R.string.confirm_deletion_description),
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                     lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
                     color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.size(32.dp))
                 OutlinedButton(
                     modifier = Modifier.width(200.dp),
                     onClick = onCancelDeleteClick,
                 ) {
-                    Text(text = "No, I changed my mind")
+                    Text(text = stringResource(R.string.confirm_deletion_cancel))
                 }
-                Spacer(modifier = Modifier.size(4.dp))
+                Spacer(modifier = Modifier.size(8.dp))
                 Button(
                     modifier = Modifier.width(200.dp),
                     onClick = onConfirmDeleteClick,
                 ) {
-                    Text(text = "Yes, delete it")
+                    Text(text = pluralStringResource(id = R.plurals.confirm_deletion_confirm, deleteCount))
                 }
             }
         }
@@ -259,7 +265,7 @@ private fun HomeTopBar(
     ) {
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = "Photo on Cover",
+            text = stringResource(R.string.app_name),
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             fontWeight = FontWeight.Bold,
@@ -298,7 +304,7 @@ private fun HomeTopBarMenu(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.ic_delete),
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(R.string.content_description_delete_menu),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -309,7 +315,7 @@ private fun HomeTopBarMenu(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.ic_instruction),
-                        contentDescription = "Instruction",
+                        contentDescription = stringResource(R.string.content_description_instruction_menu),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -328,7 +334,7 @@ private fun HomeTopBarMenu(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.ic_cancel),
-                        contentDescription = "Exit delete mode",
+                        contentDescription = stringResource(R.string.content_description_exit_delete_mode_button),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -339,7 +345,7 @@ private fun HomeTopBarMenu(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.ic_confirm),
-                        contentDescription = "Perform photo deletion",
+                        contentDescription = stringResource(R.string.content_description_perform_photo_deletion_button),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -421,12 +427,12 @@ private fun HomeContent(
                 Icon(
                     modifier = Modifier.size(64.dp),
                     painter = painterResource(R.drawable.ic_empty),
-                    contentDescription = "Empty photo",
+                    contentDescription = stringResource(R.string.content_description_empty_photo_icon),
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "Your photo on cover\nis empty",
+                    text = stringResource(R.string.empty_photo),
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                     lineHeight = MaterialTheme.typography.headlineSmall.lineHeight,
                     fontWeight = FontWeight.Bold,
@@ -435,13 +441,13 @@ private fun HomeContent(
                 InfiniteBounceAnimation {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Add your first photo",
+                            text = stringResource(R.string.add_first_photo),
                             fontWeight = FontWeight.Bold,
                         )
                         Icon(
                             modifier = Modifier.size(32.dp),
                             painter = painterResource(R.drawable.ic_down),
-                            contentDescription = "Down arrow",
+                            contentDescription = stringResource(R.string.content_description_down_arrow_icon),
                         )
                         Spacer(modifier = Modifier.size(84.dp))
                     }
@@ -501,7 +507,7 @@ private fun HomeFloatingActionButton(
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_add),
-            contentDescription = "Add photo",
+            contentDescription = stringResource(R.string.content_description_add_photo_button),
         )
     }
 }

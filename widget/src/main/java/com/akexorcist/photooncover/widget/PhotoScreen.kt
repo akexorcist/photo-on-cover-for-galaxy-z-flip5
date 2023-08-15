@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
@@ -16,7 +17,6 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
-import androidx.glance.TintColorFilterParams
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.background
@@ -176,14 +176,14 @@ fun NoPhotoAvailable(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "No photo available",
+            text = stringResource(R.string.no_photo),
             style = TextStyle(
                 color = GlanceTheme.colors.onBackground,
             )
         )
         Spacer(modifier = GlanceModifier.size(16.dp))
         Button(
-            text = "Select from app",
+            text = stringResource(R.string.select_from_app),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = GlanceTheme.colors.primary,
                 contentColor = GlanceTheme.colors.onPrimary,
@@ -192,7 +192,7 @@ fun NoPhotoAvailable(
         )
         Spacer(modifier = GlanceModifier.size(16.dp))
         Button(
-            text = "Reload",
+            text = stringResource(R.string.reload_widget),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = GlanceTheme.colors.primary,
                 contentColor = GlanceTheme.colors.onPrimary,
@@ -229,7 +229,7 @@ private fun PhotoCard(
         ) {
             Image(
                 provider = ImageProvider(bitmap),
-                contentDescription = "Photo on cover",
+                contentDescription = stringResource(R.string.content_description_photo_on_widget),
             )
         }
     }

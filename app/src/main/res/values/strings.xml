@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Photo on Cover</string>
+    <plurals name="confirm_deletion_title">
+        <item quantity="other">Are you sure you want\nto delete %d photo?</item>
+        <item quantity="one">Are you sure you want\nto delete %d photo?</item>
+        <item quantity="many">Are you sure you want\nto delete %d photos?</item>
+    </plurals>
+    <string name="confirm_deletion_description">This action cannot be undone.</string>
+    <string name="confirm_deletion_cancel">No, I changed my mind</string>
+    <plurals name="confirm_deletion_confirm">
+        <item quantity="other">Yes, delete it</item>
+        <item quantity="one">Yes, delete it</item>
+        <item quantity="many">Yes, delete them</item>
+    </plurals>
+    <string name="empty_photo">Your photo on cover\nis empty</string>
+    <string name="add_first_photo">Add your fiirst photo</string>
+
+    <string name="content_description_down_arrow_icon">Down arrow</string>
+    <string name="content_description_empty_photo_icon">Empty photo</string>
+    <string name="content_description_delete_menu">Delete menu</string>
+    <string name="content_description_instruction_menu">Instruction</string>
+    <string name="content_description_exit_delete_mode_button">Exit delete mode</string>
+    <string name="content_description_perform_photo_deletion_button">Perform photo</string>
+    <string name="content_description_add_photo_button">"Add photo"</string>
 </resources>

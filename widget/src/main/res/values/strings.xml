@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_photo">No photo available</string>
+    <string name="select_from_app">Select from app</string>
+    <string name="reload_widget">Reload</string>
+    <string name="content_description_photo_on_widget">Photo on cover</string>
+</resources>
