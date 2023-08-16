@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -72,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.akexorcist.photooncover.R
@@ -81,6 +81,7 @@ import com.akexorcist.photooncover.core.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.core.utility.FileUtility
 import com.akexorcist.photooncover.core.utility.toPx
+import com.akexorcist.photooncover.ui.feature.home.navigation.rememberHomeScreenNavigator
 import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -102,7 +103,11 @@ private val DefaultPhotoItemShape = RoundedCornerShape(16.dp)
 private val JpegCompressFormat = Bitmap.CompressFormat.JPEG
 
 @Composable
-fun HomeRoute(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeRoute(
+    navController: NavController,
+    viewModel: HomeViewModel = koinViewModel()
+) {
+    val screenNavigator = rememberHomeScreenNavigator(navController = navController)
     val uiState by viewModel.uiState.collectAsState(initial = HomeUiState.ViewMode(photos = listOf()))
     var photoToAddUri: Uri? by remember { mutableStateOf(null) }
 
