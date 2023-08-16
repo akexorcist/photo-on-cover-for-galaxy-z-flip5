@@ -6,14 +6,19 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -26,6 +31,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +40,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,6 +67,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -87,11 +95,15 @@ import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import kotlinx.coroutines.delay
 import org.burnoutcrew.reorderable.ReorderableItem
+import org.burnoutcrew.reorderable.ReorderableLazyGridState
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyGridState
 import org.burnoutcrew.reorderable.reorderable
 import org.koin.compose.koinInject
 import java.io.File
+
+@Suppress("PrivatePropertyName")
+private val DefaultPhotoItemShape = RoundedCornerShape(16.dp)
 
 @Suppress("PrivatePropertyName")
 private val JpegCompressFormat = Bitmap.CompressFormat.JPEG
@@ -383,29 +395,26 @@ private fun HomeContent(
                         key = { _, item -> item.id },
                     ) { index: Int, photo: PhotoData ->
                         val photoFile = File(FileUtility.getPhotoDirectory(context), photo.fileName)
-                        when {
-                            isDeleteMode && !photo.markAsDelete -> {
-                                Box(modifier = Modifier.clickable { selectPhotoToDelete(photo) }) {
-                                    PhotoItem(0.dp, photoFile)
-                                    Text(text = "Unselected")
-                                }
-                            }
-
-                            isDeleteMode && photo.markAsDelete -> {
-                                Box(modifier = Modifier.clickable { unselectPhotoToDelete(photo) }) {
-                                    PhotoItem(0.dp, photoFile)
-                                    Text(text = "Selected")
-                                }
-                            }
-
-                            else -> {
-                                ReorderableItem(state, photo.id) { isDragging ->
-                                    val elevation by animateDpAsState(
-                                        targetValue = if (isDragging) 16.dp else 0.dp,
-                                        label = "photo_elevation_animation_at_$index"
-                                    )
-                                    PhotoItem(elevation, photoFile)
-                                }
+                        val itemPadding by animateDeleteModePhotoPadding(isDeleteMode)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(itemPadding)
+                        ) {
+                            if (isDeleteMode) {
+                                DeleteModePhotoItem(
+                                    photo = photo,
+                                    unselectPhotoToDelete = unselectPhotoToDelete,
+                                    selectPhotoToDelete = selectPhotoToDelete,
+                                    photoFile = photoFile,
+                                )
+                            } else {
+                                ViewModePhotoItem(
+                                    state = state,
+                                    photo = photo,
+                                    index = index,
+                                    photoFile = photoFile,
+                                )
                             }
                         }
                     }
@@ -459,6 +468,102 @@ private fun HomeContent(
 }
 
 @Composable
+private fun LazyGridItemScope.ViewModePhotoItem(
+    state: ReorderableLazyGridState,
+    photo: PhotoData,
+    index: Int,
+    photoFile: File
+) {
+    ReorderableItem(state, photo.id) { isDragging ->
+        val elevation by animateDpAsState(
+            targetValue = if (isDragging) 16.dp else 0.dp,
+            label = "photo_elevation_animation_at_$index"
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(DefaultPhotoItemShape)
+        ) {
+            PhotoItem(elevation, photoFile)
+        }
+    }
+}
+
+@Composable
+private fun DeleteModePhotoItem(
+    photo: PhotoData,
+    unselectPhotoToDelete: (PhotoData) -> Unit,
+    selectPhotoToDelete: (PhotoData) -> Unit,
+    photoFile: File
+) {
+    Box(
+        modifier = Modifier
+            .clip(DefaultPhotoItemShape)
+            .clickable {
+                if (photo.markAsDelete) unselectPhotoToDelete(photo)
+                else selectPhotoToDelete(photo)
+            }
+    ) {
+        PhotoItem(0.dp, photoFile)
+        if (photo.markAsDelete) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background)
+            )
+        }
+        MarkedAsDeleteDimBackground(
+            visible = photo.markAsDelete,
+        )
+        MarkedAsDeleteIcon(
+            visible = photo.markAsDelete
+        )
+    }
+}
+
+@Composable
+private fun MarkedAsDeleteIcon(visible: Boolean) {
+    MarkedAsDeleteIconAnimatedVisibility(
+        visible = visible,
+        transformOrigin = TransformOrigin(0.8f, 0.4f),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            contentAlignment = Alignment.TopEnd,
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    .size(36.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_selected),
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                    contentDescription = stringResource(R.string.content_description_marked_as_delete_icon),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun animateDeleteModePhotoPadding(isDeleteMode: Boolean) = animateDpAsState(
+    targetValue = if (isDeleteMode) 8.dp else 2.dp,
+    animationSpec = spring(
+        dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = Spring.StiffnessMediumLow,
+    ),
+    label = "delete_mode_padding",
+)
+
+@Composable
 private fun PhotoItem(
     elevation: Dp,
     photoFile: File,
@@ -467,8 +572,7 @@ private fun PhotoItem(
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
-                .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5)
-                .clip(RoundedCornerShape(16.dp)),
+                .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(photoFile)
                 .crossfade(300)
@@ -476,6 +580,46 @@ private fun PhotoItem(
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )
+    }
+}
+
+@Composable
+private fun MarkedAsDeleteDimBackground(
+    visible: Boolean,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                )
+                .fillMaxWidth()
+                .aspectRatio(PhotoRatioForGalaxyZFlip5)
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun MarkedAsDeleteIconAnimatedVisibility(
+    visible: Boolean,
+    transformOrigin: TransformOrigin,
+    content: @Composable () -> Unit,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + scaleIn(
+            transformOrigin = transformOrigin,
+        ),
+        exit = fadeOut() + scaleOut(
+            transformOrigin = transformOrigin,
+        ),
+    ) {
+        content()
     }
 }
 

@@ -21,5 +21,6 @@
     <string name="content_description_instruction_menu">Instruction</string>
     <string name="content_description_exit_delete_mode_button">Exit delete mode</string>
     <string name="content_description_perform_photo_deletion_button">Perform photo</string>
-    <string name="content_description_add_photo_button">"Add photo"</string>
+    <string name="content_description_add_photo_button">Add photo</string>
+    <string name="content_description_marked_as_delete_icon">Marked as delete</string>
 </resources>
