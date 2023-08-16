@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
@@ -168,6 +167,7 @@ fun NoPhotoAvailable(
     onOpenAppClick: () -> Unit,
     onReloadClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -176,14 +176,14 @@ fun NoPhotoAvailable(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.no_photo),
+            text = context.getString(R.string.no_photo),
             style = TextStyle(
                 color = GlanceTheme.colors.onBackground,
             )
         )
         Spacer(modifier = GlanceModifier.size(16.dp))
         Button(
-            text = stringResource(R.string.select_from_app),
+            text = context.getString(R.string.select_from_app),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = GlanceTheme.colors.primary,
                 contentColor = GlanceTheme.colors.onPrimary,
@@ -192,7 +192,7 @@ fun NoPhotoAvailable(
         )
         Spacer(modifier = GlanceModifier.size(16.dp))
         Button(
-            text = stringResource(R.string.reload_widget),
+            text = context.getString(R.string.reload_widget),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = GlanceTheme.colors.primary,
                 contentColor = GlanceTheme.colors.onPrimary,
@@ -229,7 +229,7 @@ private fun PhotoCard(
         ) {
             Image(
                 provider = ImageProvider(bitmap),
-                contentDescription = stringResource(R.string.content_description_photo_on_widget),
+                contentDescription = context.getString(R.string.content_description_photo_on_widget),
             )
         }
     }
