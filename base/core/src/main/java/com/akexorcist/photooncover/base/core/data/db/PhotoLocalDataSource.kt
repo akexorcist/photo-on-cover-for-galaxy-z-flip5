@@ -15,6 +15,9 @@ interface PhotoLocalDataSource {
     @Query("SELECT * FROM photo ORDER BY `order` ASC")
     suspend fun getAllPhotos(): List<PhotoEntity>
 
+    @Query("SELECT COUNT(*) FROM photo")
+    suspend fun getPhotoCount(): Int
+
     @Insert
     suspend fun insert(photo: PhotoEntity)
 
@@ -22,7 +25,7 @@ interface PhotoLocalDataSource {
     suspend fun delete(photo: PhotoEntity)
 
     @Query("SELECT MAX(`order`) FROM photo")
-    suspend fun getLastOrder(): Int
+    suspend fun getMaxOrder(): Int
 
     @Query("SELECT * FROM photo WHERE `order` = :order")
     suspend fun getPhoto(order: Int): PhotoEntity?
@@ -58,5 +61,11 @@ interface PhotoLocalDataSource {
         photos.forEachIndexed { index, photo ->
             updatePhotoOrder(photo.id, index)
         }
+    }
+
+    @Transaction
+    suspend fun getLatestOrder(): Int? {
+        return getMaxOrder().takeIf { it != 0 }
+            ?: getPhotoCount().takeIf { it == 1 }?.let { 0 }
     }
 }
