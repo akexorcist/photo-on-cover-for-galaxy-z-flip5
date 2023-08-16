@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -487,7 +486,7 @@ private fun HomeContent(
 }
 
 @Composable
-private fun LazyGridItemScope.ViewModePhotoItem(
+private fun ViewModePhotoItem(
     state: ReorderableLazyGridState,
     photo: PhotoData,
     index: Int,
@@ -495,15 +494,21 @@ private fun LazyGridItemScope.ViewModePhotoItem(
 ) {
     ReorderableItem(state, photo.id) { isDragging ->
         val elevation by animateDpAsState(
-            targetValue = if (isDragging) 16.dp else 0.dp,
+            targetValue = if (isDragging) 8.dp else 2.dp,
             label = "photo_elevation_animation_at_$index"
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .shadow(
+                    elevation = elevation,
+                    shape = DefaultPhotoItemShape,
+                )
                 .clip(DefaultPhotoItemShape)
         ) {
-            PhotoItem(elevation, photoFile)
+            PhotoItem(
+                photoFile = photoFile,
+            )
         }
     }
 }
@@ -517,13 +522,19 @@ private fun DeleteModePhotoItem(
 ) {
     Box(
         modifier = Modifier
+            .shadow(
+                elevation = 2.dp,
+                shape = DefaultPhotoItemShape,
+            )
             .clip(DefaultPhotoItemShape)
             .clickable {
                 if (photo.markAsDelete) unselectPhotoToDelete(photo)
                 else selectPhotoToDelete(photo)
             }
     ) {
-        PhotoItem(0.dp, photoFile)
+        PhotoItem(
+            photoFile = photoFile,
+        )
         if (photo.markAsDelete) {
             Box(
                 modifier = Modifier
@@ -584,22 +595,19 @@ private fun animateDeleteModePhotoPadding(isDeleteMode: Boolean) = animateDpAsSt
 
 @Composable
 private fun PhotoItem(
-    elevation: Dp,
     photoFile: File,
 ) {
-    Box(modifier = Modifier.shadow(elevation)) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(photoFile)
-                .crossfade(300)
-                .build(),
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-        )
-    }
+    AsyncImage(
+        modifier = Modifier
+            .fillMaxSize()
+            .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5),
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(photoFile)
+            .crossfade(300)
+            .build(),
+        contentScale = ContentScale.Crop,
+        contentDescription = null,
+    )
 }
 
 @Composable
