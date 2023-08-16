@@ -3,11 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/widget_preview_background"
+    android:gravity="center"
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_app" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/image_widget_preview" />
+        android:text="@string/widget_name"
+        android:textColor="@color/widget_preview_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 </LinearLayout>
