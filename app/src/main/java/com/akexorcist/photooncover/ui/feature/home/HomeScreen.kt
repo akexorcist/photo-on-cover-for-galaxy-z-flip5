@@ -19,11 +19,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,8 +39,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -51,7 +46,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,7 +65,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -97,7 +90,7 @@ import org.burnoutcrew.reorderable.ReorderableLazyGridState
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyGridState
 import org.burnoutcrew.reorderable.reorderable
-import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 import java.io.File
 
 @Suppress("PrivatePropertyName")
@@ -107,7 +100,7 @@ private val DefaultPhotoItemShape = RoundedCornerShape(16.dp)
 private val JpegCompressFormat = Bitmap.CompressFormat.JPEG
 
 @Composable
-fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
+fun HomeRoute(viewModel: HomeViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState(initial = HomeUiState.ViewMode(photos = listOf()))
     var photoToAddUri: Uri? by remember { mutableStateOf(null) }
 

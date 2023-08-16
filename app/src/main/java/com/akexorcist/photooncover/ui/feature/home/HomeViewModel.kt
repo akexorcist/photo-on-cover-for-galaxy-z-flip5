@@ -2,6 +2,7 @@ package com.akexorcist.photooncover.ui.feature.home
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.akexorcist.photooncover.core.data.PhotoData
@@ -12,12 +13,23 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+private const val IS_DELETE_MODE_KEY = "isDeleteMode"
+private const val IS_INSTRUCTION_MODE_KEY = "isInstructionMode"
+
 class HomeViewModel(
+    private val handle: SavedStateHandle,
     private val photoRepository: PhotoRepository
 ) : ViewModel() {
 
-    private val _isDeleteMode = MutableStateFlow(false)
-    private val _isInstructionMode = MutableStateFlow(false)
+    private val _isDeleteMode = handle.getStateFlow(
+        key = IS_DELETE_MODE_KEY,
+        initialValue = false,
+    )
+
+    private val _isInstructionMode = handle.getStateFlow(
+        key = IS_INSTRUCTION_MODE_KEY,
+        initialValue = false
+    )
     private val _markedAsDeletePhotos: MutableStateFlow<List<PhotoData>> = MutableStateFlow(listOf())
 
     val uiState: Flow<HomeUiState> = photoRepository.getPhotos().combine(_isInstructionMode) { photos, isInstructionMode ->
@@ -61,23 +73,23 @@ class HomeViewModel(
     }
 
     fun enterDeleteMode() {
-        _isDeleteMode.update { true }
-        _isInstructionMode.update { false }
+        setIsDeleteMode(true)
+        setIsInstructionMode(false)
     }
 
     fun exitWithoutPhotoDeletion() {
-        _isDeleteMode.update { false }
+        setIsDeleteMode(false)
         _markedAsDeletePhotos.update { listOf() }
     }
 
     fun exitWithPhotoDeletion() {
-        _isDeleteMode.update { false }
+        setIsDeleteMode(false)
     }
 
     fun confirmDeletePhoto() = viewModelScope.launch {
         val photos = _markedAsDeletePhotos.value
         photoRepository.deletePhotos(photos)
-        _isDeleteMode.update { false }
+        setIsDeleteMode(false)
     }
 
     fun selectPhotoToDelete(photo: PhotoData) {
@@ -89,11 +101,19 @@ class HomeViewModel(
     }
 
     fun enterInstructionMode() {
-        _isInstructionMode.update { true }
-        _isDeleteMode.update { false }
+        setIsInstructionMode(true)
+        setIsDeleteMode(false)
     }
 
     fun exitInstructionMode() {
-        _isInstructionMode.update { false }
+        setIsInstructionMode(false)
+    }
+
+    private fun setIsDeleteMode(isDeleteMode: Boolean) {
+        handle[IS_DELETE_MODE_KEY] = isDeleteMode
+    }
+
+    private fun setIsInstructionMode(isInstructionMode: Boolean) {
+        handle[IS_INSTRUCTION_MODE_KEY] = isInstructionMode
     }
 }
