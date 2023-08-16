@@ -2,7 +2,7 @@ package com.akexorcist.photooncover.navigation
 
 import android.content.Context
 import android.content.Intent
-import com.akexorcist.photooncover.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
 import com.akexorcist.photooncover.ui.MainActivity
 
 class DefaultWidgetNavigation : WidgetNavigation {

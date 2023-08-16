@@ -1,10 +1,10 @@
-package com.akexorcist.photooncover.core.data
+package com.akexorcist.photooncover.base.core.data
 
 import android.content.Context
 import android.net.Uri
-import com.akexorcist.photooncover.core.data.db.PhotoEntity
-import com.akexorcist.photooncover.core.data.db.PhotoLocalDataSource
-import com.akexorcist.photooncover.core.utility.FileUtility
+import com.akexorcist.photooncover.base.core.data.db.PhotoEntity
+import com.akexorcist.photooncover.base.core.data.db.PhotoLocalDataSource
+import com.akexorcist.photooncover.base.core.utility.FileUtility
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File

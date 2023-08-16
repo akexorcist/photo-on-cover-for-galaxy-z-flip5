@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.core.utility
+package com.akexorcist.photooncover.base.core.utility
 
 import android.content.Context
 import java.io.File

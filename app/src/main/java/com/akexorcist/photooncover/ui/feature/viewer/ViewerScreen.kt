@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import coil.request.ImageRequest
-import com.akexorcist.photooncover.core.utility.FileUtility
+import com.akexorcist.photooncover.base.core.utility.FileUtility
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.io.File
 import com.akexorcist.photooncover.base.resource.R as ResourceR

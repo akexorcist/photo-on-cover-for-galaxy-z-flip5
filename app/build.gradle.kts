@@ -82,7 +82,7 @@ dependencies {
     implementation("me.saket.telephoto:zoomable-image-coil:0.5.0")
 
     implementation(project(":widget"))
-    implementation(project(":core"))
+    implementation(project(":base:core"))
     implementation(project(":feature:home"))
     implementation(project(":base:resource"))
     implementation(project(":base:ui"))

@@ -31,10 +31,10 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.akexorcist.photooncover.core.config.PhotoRatioForGalaxyZFlip5
-import com.akexorcist.photooncover.core.data.PhotoData
-import com.akexorcist.photooncover.core.navigation.WidgetNavigation
-import com.akexorcist.photooncover.core.utility.FileUtility
+import com.akexorcist.photooncover.base.core.config.PhotoRatioForGalaxyZFlip5
+import com.akexorcist.photooncover.base.core.data.PhotoData
+import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.utility.FileUtility
 import java.io.File
 
 @Suppress("PrivatePropertyName")

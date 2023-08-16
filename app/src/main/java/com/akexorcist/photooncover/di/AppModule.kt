@@ -2,7 +2,7 @@ package com.akexorcist.photooncover.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
-import com.akexorcist.photooncover.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
 import com.akexorcist.photooncover.navigation.DefaultWidgetNavigation
 import com.akexorcist.photooncover.feature.home.HomeViewModel
 import com.akexorcist.photooncover.ui.feature.home.navigation.DefaultHomeScreenNavigator

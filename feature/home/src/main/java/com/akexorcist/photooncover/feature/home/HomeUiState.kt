@@ -1,6 +1,6 @@
 package com.akexorcist.photooncover.feature.home
 
-import com.akexorcist.photooncover.core.data.PhotoData
+import com.akexorcist.photooncover.base.core.data.PhotoData
 
 sealed class HomeUiState(
     open val photos: List<PhotoData>,

@@ -2,11 +2,10 @@ package com.akexorcist.photooncover.widget
 
 import android.content.Context
 import androidx.glance.GlanceId
-import androidx.glance.GlanceTheme
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
-import com.akexorcist.photooncover.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
 import com.akexorcist.photooncover.widget.theme.PhotoWidgetTheme
 
 class PhotoWidget(

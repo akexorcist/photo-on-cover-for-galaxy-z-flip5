@@ -1,10 +1,10 @@
-package com.akexorcist.photooncover.core.di
+package com.akexorcist.photooncover.base.core.di
 
 import androidx.room.Room
-import com.akexorcist.photooncover.core.data.DefaultPhotoRepository
-import com.akexorcist.photooncover.core.data.PhotoRepository
-import com.akexorcist.photooncover.core.data.db.PhotoDatabase
-import com.akexorcist.photooncover.core.data.db.PhotoLocalDataSource
+import com.akexorcist.photooncover.base.core.data.DefaultPhotoRepository
+import com.akexorcist.photooncover.base.core.data.PhotoRepository
+import com.akexorcist.photooncover.base.core.data.db.PhotoDatabase
+import com.akexorcist.photooncover.base.core.data.db.PhotoLocalDataSource
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 

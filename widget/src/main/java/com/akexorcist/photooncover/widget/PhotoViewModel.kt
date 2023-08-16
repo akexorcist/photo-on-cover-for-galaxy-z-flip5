@@ -2,7 +2,7 @@ package com.akexorcist.photooncover.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.akexorcist.photooncover.core.data.PhotoRepository
+import com.akexorcist.photooncover.base.core.data.PhotoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest

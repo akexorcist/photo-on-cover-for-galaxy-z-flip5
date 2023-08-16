@@ -5,8 +5,8 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.akexorcist.photooncover.core.data.PhotoData
-import com.akexorcist.photooncover.core.data.PhotoRepository
+import com.akexorcist.photooncover.base.core.data.PhotoData
+import com.akexorcist.photooncover.base.core.data.PhotoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine

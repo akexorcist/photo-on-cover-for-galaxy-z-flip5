@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.akexorcist.photooncover.core"
+    namespace = "com.akexorcist.photooncover.base.core"
     compileSdk = 34
 
     defaultConfig {
@@ -58,6 +58,4 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-
-    implementation(project(":base:core"))
 }

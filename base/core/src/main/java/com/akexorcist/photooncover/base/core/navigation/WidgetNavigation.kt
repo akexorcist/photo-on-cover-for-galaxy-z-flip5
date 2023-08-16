@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.core.navigation
+package com.akexorcist.photooncover.base.core.navigation
 
 import android.content.Context
 

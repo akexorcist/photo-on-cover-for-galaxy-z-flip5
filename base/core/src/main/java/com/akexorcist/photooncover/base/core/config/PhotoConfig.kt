@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.core.config
+package com.akexorcist.photooncover.base.core.config
 
 const val PhotoWidthForGalaxyZFlip5 = 748
 const val PhotoHeightForGalaxyZFlip5 = 654

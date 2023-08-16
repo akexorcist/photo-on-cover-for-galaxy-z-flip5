@@ -1,6 +1,6 @@
-package com.akexorcist.photooncover.core.data
+package com.akexorcist.photooncover.base.core.data
 
-import com.akexorcist.photooncover.core.data.db.PhotoEntity
+import com.akexorcist.photooncover.base.core.data.db.PhotoEntity
 
 data class PhotoData(
     val id: String,

@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import com.akexorcist.photooncover.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

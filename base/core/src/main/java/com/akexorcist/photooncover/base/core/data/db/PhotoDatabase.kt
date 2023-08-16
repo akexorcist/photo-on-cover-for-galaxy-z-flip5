@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.core.data.db
+package com.akexorcist.photooncover.base.core.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
