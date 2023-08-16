@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FabPosition
@@ -467,7 +468,7 @@ private fun PhotoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .aspectRatio(ratio = PhotoRatioForGalaxyZFlip5)
-                .clip(MaterialTheme.shapes.large),
+                .clip(RoundedCornerShape(16.dp)),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(photoFile)
                 .crossfade(300)
