@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.feature.home.navigation
+package com.akexorcist.photooncover.feature.viewer.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -6,16 +6,14 @@ import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun rememberHomeScreenNavigator(
+fun rememberViewerScreenNavigator(
     navController: NavController,
-): HomeScreenNavigator {
+): ViewerScreenNavigator {
     return koinInject {
         parametersOf(navController)
     }
 }
 
-interface HomeScreenNavigator {
-    fun navigateToViewer(fileName: String)
-
-    fun navigateToInstruction()
+interface ViewerScreenNavigator {
+    fun navigateToHome()
 }
