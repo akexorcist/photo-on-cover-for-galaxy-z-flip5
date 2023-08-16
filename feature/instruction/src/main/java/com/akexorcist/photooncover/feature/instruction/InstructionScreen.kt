@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.akexorcist.photooncover.base.core.utility.toPx
+import com.akexorcist.photooncover.base.ui.component.ExitButton
 import com.akexorcist.photooncover.feature.instruction.navigation.rememberInstructionScreenNavigator
 import com.akexorcist.photooncover.base.resource.R as ResourceR
 
@@ -106,28 +107,12 @@ private fun InstructionScreen(
             )
             Spacer(modifier = Modifier.size(32.dp))
         }
-        Row(
-            modifier = Modifier.padding(32.dp)
-        ) {
+        Row(modifier = Modifier.padding(32.dp)) {
             Spacer(modifier = Modifier.weight(1f))
-            FilledIconButton(
-                modifier = Modifier
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = MaterialTheme.shapes.medium,
-                    )
-                    .size(36.dp),
-                shape = MaterialTheme.shapes.medium,
-                colors = IconButtonDefaults.filledIconButtonColors(),
+            ExitButton(
                 onClick = onCloseInstructionClick,
-            ) {
-                Icon(
-                    modifier = Modifier.size(28.dp),
-                    painter = painterResource(ResourceR.drawable.ic_cancel),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = stringResource(ResourceR.string.content_description_close_instruction_button),
-                )
-            }
+                contentDescription = stringResource(ResourceR.string.content_description_close_instruction_button),
+            )
         }
     }
 }
