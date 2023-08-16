@@ -1,7 +1,7 @@
 package com.akexorcist.photooncover.ui.feature.home.navigation
 
 import androidx.navigation.NavController
-import com.akexorcist.photooncover.navigation.ScreenNavigator
+import com.akexorcist.photooncover.core.navigation.ScreenNavigator
 
 class DefaultHomeScreenNavigator(
     navController: NavController
