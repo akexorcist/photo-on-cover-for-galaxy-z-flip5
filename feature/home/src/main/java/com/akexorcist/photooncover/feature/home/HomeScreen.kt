@@ -2,6 +2,7 @@ package com.akexorcist.photooncover.feature.home
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -245,9 +246,7 @@ private fun AddPhotoButton(
         exit = fadeOut() + scaleOut(),
     ) {
         DebouncedClickable(
-            onClick = {
-                if (!isDeleteMode) onAddPhotoClick
-            }
+            onClick = { if (!isDeleteMode) onAddPhotoClick() }
         ) { onClickHandler ->
             HomeFloatingActionButton(onClick = onClickHandler)
         }
