@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PhotoLocalDataSource {
     @Query("SELECT * FROM photo ORDER BY `order` ASC")
-    fun getAll(): Flow<List<PhotoEntity>>
+    fun getAllPhotosAsFlow(): Flow<List<PhotoEntity>>
+
+    @Query("SELECT * FROM photo ORDER BY `order` ASC")
+    suspend fun getAllPhotos(): List<PhotoEntity>
 
     @Insert
     suspend fun insert(photo: PhotoEntity)
@@ -47,4 +50,13 @@ interface PhotoLocalDataSource {
 
     @Query("DELETE FROM photo WHERE id IN (:ids)")
     suspend fun deletePhotosByIds(ids: List<String>)
+
+    @Transaction
+    suspend fun deleteAndReindexPhotos(ids: List<String>) {
+        deletePhotosByIds(ids)
+        val photos: List<PhotoEntity> = getAllPhotos()
+        photos.forEachIndexed { index, photo ->
+            updatePhotoOrder(photo.id, index)
+        }
+    }
 }

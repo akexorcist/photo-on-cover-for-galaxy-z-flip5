@@ -26,7 +26,7 @@ class DefaultPhotoRepository(
     private val dataSource: PhotoLocalDataSource,
 ) : PhotoRepository {
     override fun getPhotos(): Flow<List<PhotoData>> {
-        return dataSource.getAll().map { items ->
+        return dataSource.getAllPhotosAsFlow().map { items ->
             items.map { entity ->
                 entity.toData()
             }
@@ -75,7 +75,7 @@ class DefaultPhotoRepository(
     }
 
     override suspend fun deletePhotos(photos: List<PhotoData>) {
-        dataSource.deletePhotosByIds(photos.map { it.id })
+        dataSource.deleteAndReindexPhotos(photos.map { it.id })
         photos.forEach { photo ->
             deletePhotoInInternalStorage(context, photo.fileName)
         }
