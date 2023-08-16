@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.akexorcist.photooncover.base.ui.component.DebouncedClickable
 import com.akexorcist.photooncover.base.resource.R as ResourceR
 
 @Composable
@@ -82,11 +83,15 @@ internal fun DeletePhotoConfirmationScreen(
                 Text(text = stringResource(ResourceR.string.confirm_deletion_cancel))
             }
             Spacer(modifier = Modifier.size(8.dp))
-            Button(
-                modifier = Modifier.width(200.dp),
-                onClick = onConfirmDeleteClick,
-            ) {
-                Text(text = pluralStringResource(ResourceR.plurals.confirm_deletion_confirm, deleteCount))
+            DebouncedClickable(
+                onClick = onConfirmDeleteClick
+            ) { onClickHandler ->
+                Button(
+                    modifier = Modifier.width(200.dp),
+                    onClick = onClickHandler,
+                ) {
+                    Text(text = pluralStringResource(ResourceR.plurals.confirm_deletion_confirm, deleteCount))
+                }
             }
         }
     }

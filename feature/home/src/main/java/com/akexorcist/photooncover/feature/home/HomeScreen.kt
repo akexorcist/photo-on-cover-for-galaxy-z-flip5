@@ -82,6 +82,7 @@ import com.akexorcist.photooncover.base.core.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.base.core.data.PhotoData
 import com.akexorcist.photooncover.base.core.utility.FileUtility
 import com.akexorcist.photooncover.base.core.utility.toPx
+import com.akexorcist.photooncover.base.ui.component.DebouncedClickable
 import com.akexorcist.photooncover.feature.home.navigation.rememberHomeScreenNavigator
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -197,7 +198,13 @@ fun HomeScreen(
                     onInstructionClick = onInstructionClick
                 )
             },
-            floatingActionButton = { HomeFloatingActionButton(onClick = onAddPhotoClick) },
+            floatingActionButton = {
+                DebouncedClickable(
+                    onClick = onAddPhotoClick
+                ) { onClickHandler ->
+                    HomeFloatingActionButton(onClick = onClickHandler)
+                }
+            },
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
             HomeContent(
@@ -281,16 +288,20 @@ private fun HomeTopBarMenu(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
-                IconButton(
-                    modifier = Modifier.size(48.dp),
-                    onClick = onInstructionClick,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(ResourceR.drawable.ic_instruction),
-                        contentDescription = stringResource(ResourceR.string.content_description_instruction_menu),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
+                DebouncedClickable(
+                    onClick = onInstructionClick
+                ) { onClickHandler ->
+                    IconButton(
+                        modifier = Modifier.size(48.dp),
+                        onClick = onClickHandler,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(ResourceR.drawable.ic_instruction),
+                            contentDescription = stringResource(ResourceR.string.content_description_instruction_menu),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
                 }
             }
         }
@@ -311,16 +322,20 @@ private fun HomeTopBarMenu(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
-                IconButton(
-                    modifier = Modifier.size(48.dp),
-                    onClick = onPerformPhotoDeletionClick,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(ResourceR.drawable.ic_confirm),
-                        contentDescription = stringResource(ResourceR.string.content_description_perform_photo_deletion_button),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
+                DebouncedClickable(
+                    onClick = onPerformPhotoDeletionClick
+                ) { onClickHandler ->
+                    IconButton(
+                        modifier = Modifier.size(48.dp),
+                        onClick = onClickHandler,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(ResourceR.drawable.ic_confirm),
+                            contentDescription = stringResource(ResourceR.string.content_description_perform_photo_deletion_button),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
                 }
             }
         }

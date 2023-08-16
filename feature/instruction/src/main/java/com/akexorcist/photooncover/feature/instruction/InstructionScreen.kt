@@ -2,7 +2,13 @@ package com.akexorcist.photooncover.feature.instruction
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.akexorcist.photooncover.base.core.utility.toPx
 import com.akexorcist.photooncover.feature.instruction.navigation.rememberInstructionScreenNavigator
 import com.akexorcist.photooncover.base.resource.R as ResourceR
 
@@ -43,7 +50,10 @@ fun InstructionRoute(
     navController: NavController
 ) {
     val screenNavigator = rememberInstructionScreenNavigator(navController = navController)
+    val scrollState = rememberScrollState()
+
     InstructionScreen(
+        scrollState = scrollState,
         onCloseInstructionClick = {
             screenNavigator.navigateToHome()
         },
@@ -52,9 +62,9 @@ fun InstructionRoute(
 
 @Composable
 private fun InstructionScreen(
+    scrollState: ScrollState,
     onCloseInstructionClick: () -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -171,6 +181,7 @@ private fun InstructionText(
 private fun InstructionScreenPreview() {
     MaterialTheme {
         InstructionScreen(
+            scrollState = rememberScrollState(),
             onCloseInstructionClick = {},
         )
     }
