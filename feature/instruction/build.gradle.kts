@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.akexorcist.photooncover.feature.instruction"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 33

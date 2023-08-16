@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.viewer
+package com.akexorcist.photooncover.feature.viewer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
