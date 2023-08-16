@@ -675,6 +675,7 @@ private fun HomeFloatingActionButton(
 ) {
     FloatingActionButton(
         shape = FloatingActionButtonDefaults.shape,
+        elevation = FloatingActionButtonDefaults.elevation(2.dp),
         onClick = onClick,
     ) {
         Icon(
