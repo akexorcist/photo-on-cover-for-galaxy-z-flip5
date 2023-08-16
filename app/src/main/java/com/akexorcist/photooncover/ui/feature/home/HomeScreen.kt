@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -365,12 +367,7 @@ private fun HomeContent(
                                     photoFile = photoFile,
                                 )
                             } else {
-                                ViewModePhotoItem(
-                                    state = state,
-                                    photo = photo,
-                                    index = index,
-                                    photoFile = photoFile,
-                                )
+                                ViewModePhotoItem(state, photo, index, photoFile)
                             }
                         }
                     }
@@ -424,7 +421,7 @@ private fun HomeContent(
 }
 
 @Composable
-private fun ViewModePhotoItem(
+private fun LazyGridItemScope.ViewModePhotoItem(
     state: ReorderableLazyGridState,
     photo: PhotoData,
     index: Int,
