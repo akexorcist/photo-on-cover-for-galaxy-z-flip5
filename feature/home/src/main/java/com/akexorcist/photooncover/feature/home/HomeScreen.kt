@@ -189,6 +189,7 @@ fun HomeScreen(
 ) {
     val photos = uiState.photos
     val isDeleteMode = uiState is HomeUiState.DeleteMode
+    val hasPhoto = photos.isNotEmpty()
     val deleteCount = photos.count { photo -> photo.markAsDelete }
     val showConfirmPhotoDeletion = !isDeleteMode && deleteCount > 0
     Box(modifier = Modifier.fillMaxSize()) {
@@ -196,6 +197,7 @@ fun HomeScreen(
             topBar = {
                 HomeTopBar(
                     isDeleteMode = isDeleteMode,
+                    hasPhoto = hasPhoto,
                     onDeleteClick = onDeleteClick,
                     onPerformPhotoDeletionClick = onPerformPhotoDeletionClick,
                     onExitDeleteModeClick = onExitDeleteModeClick,
@@ -203,11 +205,10 @@ fun HomeScreen(
                 )
             },
             floatingActionButton = {
-                DebouncedClickable(
-                    onClick = onAddPhotoClick
-                ) { onClickHandler ->
-                    HomeFloatingActionButton(onClick = onClickHandler)
-                }
+                AddPhotoButton(
+                    isDeleteMode = isDeleteMode,
+                    onAddPhotoClick = onAddPhotoClick,
+                )
             },
             floatingActionButtonPosition = FabPosition.Center,
         ) { padding ->
@@ -234,8 +235,29 @@ fun HomeScreen(
 }
 
 @Composable
+private fun AddPhotoButton(
+    isDeleteMode: Boolean,
+    onAddPhotoClick: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = !isDeleteMode,
+        enter = fadeIn() + scaleIn(),
+        exit = fadeOut() + scaleOut(),
+    ) {
+        DebouncedClickable(
+            onClick = {
+                if (!isDeleteMode) onAddPhotoClick
+            }
+        ) { onClickHandler ->
+            HomeFloatingActionButton(onClick = onClickHandler)
+        }
+    }
+}
+
+@Composable
 private fun HomeTopBar(
     isDeleteMode: Boolean,
+    hasPhoto: Boolean,
     onDeleteClick: () -> Unit,
     onPerformPhotoDeletionClick: () -> Unit,
     onExitDeleteModeClick: () -> Unit,
@@ -258,6 +280,7 @@ private fun HomeTopBar(
         Spacer(modifier = Modifier.weight(1f))
         HomeTopBarMenu(
             isDeleteMode = isDeleteMode,
+            hasPhoto = hasPhoto,
             onDeleteClick = onDeleteClick,
             onPerformPhotoDeletionClick = onPerformPhotoDeletionClick,
             onExitDeleteModeClick = onExitDeleteModeClick,
@@ -270,18 +293,19 @@ private fun HomeTopBar(
 @Composable
 private fun HomeTopBarMenu(
     isDeleteMode: Boolean,
+    hasPhoto: Boolean,
     onDeleteClick: () -> Unit,
     onPerformPhotoDeletionClick: () -> Unit,
     onExitDeleteModeClick: () -> Unit,
     onInstructionClick: () -> Unit,
 ) {
     Box(contentAlignment = Alignment.CenterEnd) {
-        AnimatedVisibility(
-            visible = !isDeleteMode,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Row {
+        Row {
+            AnimatedVisibility(
+                visible = !isDeleteMode && hasPhoto,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
                 IconButton(
                     modifier = Modifier.size(48.dp),
                     onClick = onDeleteClick,
@@ -293,6 +317,12 @@ private fun HomeTopBarMenu(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
+            }
+            AnimatedVisibility(
+                visible = !isDeleteMode,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
                 DebouncedClickable(
                     onClick = onInstructionClick
                 ) { onClickHandler ->
