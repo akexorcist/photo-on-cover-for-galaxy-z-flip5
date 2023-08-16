@@ -200,62 +200,80 @@ fun HomeScreen(
                 padding = padding,
                 photos = photos,
                 isDeleteMode = isDeleteMode,
+                showConfirmPhotoDeletion = showConfirmPhotoDeletion,
                 onPhotoMoved = onPhotoMoved,
                 selectPhotoToDelete = selectPhotoToDelete,
                 unselectPhotoToDelete = unselectPhotoToDelete,
             )
         }
         val verticalOffset = 20.dp.toPx().toInt()
-        AnimatedVisibility(
-            visible = showConfirmPhotoDeletion,
-            enter = fadeIn() + slideInVertically { verticalOffset },
-            exit = fadeOut() + slideOutVertically { verticalOffset },
+        DeletePhotoConfirmation(
+            showConfirmPhotoDeletion = showConfirmPhotoDeletion,
+            verticalOffset = verticalOffset,
+            deleteCount = deleteCount,
+            onCancelDeleteClick = onCancelDeleteClick,
+            onConfirmDeleteClick = onConfirmDeleteClick,
+        )
+    }
+}
+
+@Composable
+private fun DeletePhotoConfirmation(
+    showConfirmPhotoDeletion: Boolean,
+    verticalOffset: Int,
+    deleteCount: Int,
+    onCancelDeleteClick: () -> Unit,
+    onConfirmDeleteClick: () -> Unit,
+) {
+    AnimatedVisibility(
+        visible = showConfirmPhotoDeletion,
+        enter = fadeIn() + slideInVertically { verticalOffset },
+        exit = fadeOut() + slideOutVertically { verticalOffset },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
+                )
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                ) { },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
-                    )
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                    ) { },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Text(
+                modifier = Modifier.padding(horizontal = 32.dp),
+                text = pluralStringResource(id = R.plurals.confirm_deletion_title, deleteCount, deleteCount),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                modifier = Modifier.padding(horizontal = 32.dp),
+                text = stringResource(R.string.confirm_deletion_description),
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.size(32.dp))
+            OutlinedButton(
+                modifier = Modifier.width(200.dp),
+                onClick = onCancelDeleteClick,
             ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 32.dp),
-                    text = pluralStringResource(id = R.plurals.confirm_deletion_title, deleteCount, deleteCount),
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 32.dp),
-                    text = stringResource(R.string.confirm_deletion_description),
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.size(32.dp))
-                OutlinedButton(
-                    modifier = Modifier.width(200.dp),
-                    onClick = onCancelDeleteClick,
-                ) {
-                    Text(text = stringResource(R.string.confirm_deletion_cancel))
-                }
-                Spacer(modifier = Modifier.size(8.dp))
-                Button(
-                    modifier = Modifier.width(200.dp),
-                    onClick = onConfirmDeleteClick,
-                ) {
-                    Text(text = pluralStringResource(id = R.plurals.confirm_deletion_confirm, deleteCount))
-                }
+                Text(text = stringResource(R.string.confirm_deletion_cancel))
+            }
+            Spacer(modifier = Modifier.size(8.dp))
+            Button(
+                modifier = Modifier.width(200.dp),
+                onClick = onConfirmDeleteClick,
+            ) {
+                Text(text = pluralStringResource(id = R.plurals.confirm_deletion_confirm, deleteCount))
             }
         }
     }
@@ -372,6 +390,7 @@ private fun HomeContent(
     padding: PaddingValues,
     photos: List<PhotoData>,
     isDeleteMode: Boolean,
+    showConfirmPhotoDeletion: Boolean,
     onPhotoMoved: (Int, Int) -> Unit,
     selectPhotoToDelete: (PhotoData) -> Unit,
     unselectPhotoToDelete: (PhotoData) -> Unit,
@@ -401,7 +420,7 @@ private fun HomeContent(
                                 .fillMaxSize()
                                 .padding(itemPadding)
                         ) {
-                            if (isDeleteMode) {
+                            if (isDeleteMode || showConfirmPhotoDeletion) {
                                 DeleteModePhotoItem(
                                     photo = photo,
                                     unselectPhotoToDelete = unselectPhotoToDelete,
