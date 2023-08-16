@@ -165,6 +165,9 @@ fun HomeRoute(
                 toPosition = toPosition,
             )
         },
+        onPhotoClick = { photo ->
+            screenNavigator.navigateToViewer(photo.fileName)
+        }
     )
 }
 
@@ -182,6 +185,7 @@ fun HomeScreen(
     onConfirmDeleteClick: () -> Unit,
     onInstructionClick: () -> Unit,
     onPhotoMoved: (Int, Int) -> Unit,
+    onPhotoClick: (PhotoData) -> Unit,
 ) {
     val photos = uiState.photos
     val isDeleteMode = uiState is HomeUiState.DeleteMode
@@ -212,6 +216,7 @@ fun HomeScreen(
                 photos = photos,
                 isDeleteMode = isDeleteMode,
                 showConfirmPhotoDeletion = showConfirmPhotoDeletion,
+                onPhotoClick = onPhotoClick,
                 onPhotoMoved = onPhotoMoved,
                 selectPhotoToDelete = selectPhotoToDelete,
                 unselectPhotoToDelete = unselectPhotoToDelete,
@@ -348,6 +353,7 @@ private fun HomeContent(
     photos: List<PhotoData>,
     isDeleteMode: Boolean,
     showConfirmPhotoDeletion: Boolean,
+    onPhotoClick: (PhotoData) -> Unit,
     onPhotoMoved: (Int, Int) -> Unit,
     selectPhotoToDelete: (PhotoData) -> Unit,
     unselectPhotoToDelete: (PhotoData) -> Unit,
@@ -385,7 +391,13 @@ private fun HomeContent(
                                     photoFile = photoFile,
                                 )
                             } else {
-                                ViewModePhotoItem(state, photo, index, photoFile)
+                                ViewModePhotoItem(
+                                    state = state,
+                                    photo = photo,
+                                    index = index,
+                                    photoFile = photoFile,
+                                    onPhotoClick = onPhotoClick,
+                                )
                             }
                         }
                     }
@@ -443,7 +455,8 @@ private fun LazyGridItemScope.ViewModePhotoItem(
     state: ReorderableLazyGridState,
     photo: PhotoData,
     index: Int,
-    photoFile: File
+    photoFile: File,
+    onPhotoClick: (PhotoData) -> Unit,
 ) {
     ReorderableItem(state, photo.id) { isDragging ->
         val elevation by animateDpAsState(
@@ -457,6 +470,7 @@ private fun LazyGridItemScope.ViewModePhotoItem(
                     elevation = elevation,
                     shape = DefaultPhotoItemShape,
                 )
+                .clickable { onPhotoClick(photo) }
                 .clip(DefaultPhotoItemShape)
         ) {
             PhotoItem(
@@ -658,6 +672,7 @@ private fun HomeScreenPreview() {
             onConfirmDeleteClick = {},
             onInstructionClick = {},
             onPhotoMoved = { _, _ -> },
+            onPhotoClick = { _ -> },
         )
     }
 }

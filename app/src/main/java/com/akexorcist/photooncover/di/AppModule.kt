@@ -6,7 +6,9 @@ import com.akexorcist.photooncover.navigation.DefaultWidgetScreenNavigator
 import com.akexorcist.photooncover.navigation.DefaultHomeScreenNavigator
 import com.akexorcist.photooncover.feature.home.navigation.HomeScreenNavigator
 import com.akexorcist.photooncover.feature.instruction.navigation.InstructionScreenNavigator
+import com.akexorcist.photooncover.feature.viewer.navigation.ViewerScreenNavigator
 import com.akexorcist.photooncover.navigation.DefaultInstructionScreenNavigator
+import com.akexorcist.photooncover.navigation.DefaultViewerScreenNavigator
 import org.koin.dsl.module
 
 object AppModule {
@@ -18,6 +20,9 @@ object AppModule {
         }
         factory<InstructionScreenNavigator> { (navController: NavController) ->
             DefaultInstructionScreenNavigator(navController)
+        }
+        factory<ViewerScreenNavigator> { (navController: NavController) ->
+            DefaultViewerScreenNavigator(navController)
         }
     }
 }
