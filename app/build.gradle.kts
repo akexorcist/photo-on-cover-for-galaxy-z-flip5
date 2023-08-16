@@ -81,9 +81,9 @@ dependencies {
     implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
     implementation("me.saket.telephoto:zoomable-image-coil:0.5.0")
 
-    implementation(project(":widget"))
     implementation(project(":base:core"))
-    implementation(project(":feature:home"))
     implementation(project(":base:resource"))
     implementation(project(":base:ui"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:widget"))
 }

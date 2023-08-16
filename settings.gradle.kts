@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Photo on Cover"
 include(":app")
-include(":widget")
+include(":feature:widget")
 include(":feature:home")
 include(":base:resource")
 include(":base:ui")

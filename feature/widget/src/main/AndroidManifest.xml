@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name=".PhotoWidgetReceiver"
+            android:name="com.akexorcist.photooncover.feature.widget.PhotoWidgetReceiver"
             android:exported="true"
             android:label="Photo">
             <intent-filter>

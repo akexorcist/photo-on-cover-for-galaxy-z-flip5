@@ -7,7 +7,7 @@ import com.akexorcist.photooncover.navigation.DefaultWidgetNavigation
 import com.akexorcist.photooncover.feature.home.HomeViewModel
 import com.akexorcist.photooncover.ui.feature.home.navigation.DefaultHomeScreenNavigator
 import com.akexorcist.photooncover.feature.home.navigation.HomeScreenNavigator
-import com.akexorcist.photooncover.widget.PhotoViewModel
+import com.akexorcist.photooncover.feature.widget.PhotoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

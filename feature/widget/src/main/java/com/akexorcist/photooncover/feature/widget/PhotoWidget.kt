@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.widget
+package com.akexorcist.photooncover.feature.widget
 
 import android.content.Context
 import androidx.glance.GlanceId
@@ -6,7 +6,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
-import com.akexorcist.photooncover.widget.theme.PhotoWidgetTheme
+import com.akexorcist.photooncover.feature.widget.theme.PhotoWidgetTheme
 
 class PhotoWidget(
     private val photoViewModel: PhotoViewModel,

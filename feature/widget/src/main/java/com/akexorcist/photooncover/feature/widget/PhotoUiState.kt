@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.widget
+package com.akexorcist.photooncover.feature.widget
 
 import com.akexorcist.photooncover.base.core.data.PhotoData
 

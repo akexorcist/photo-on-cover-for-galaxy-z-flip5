@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.widget
+package com.akexorcist.photooncover.feature.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

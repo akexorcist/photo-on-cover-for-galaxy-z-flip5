@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.akexorcist.photooncover.widget"
+    namespace = "com.akexorcist.photooncover.feature.widget"
     compileSdk = 34
 
     defaultConfig {

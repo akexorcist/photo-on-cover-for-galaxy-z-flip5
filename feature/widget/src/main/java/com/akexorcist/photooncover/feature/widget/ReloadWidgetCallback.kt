@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.widget
+package com.akexorcist.photooncover.feature.widget
 
 import android.content.Context
 import android.content.Intent
