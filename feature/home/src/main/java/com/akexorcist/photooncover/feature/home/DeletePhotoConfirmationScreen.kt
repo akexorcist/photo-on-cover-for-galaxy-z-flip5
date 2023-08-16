@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.home
+package com.akexorcist.photooncover.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.akexorcist.photooncover.R
+import com.akexorcist.photooncover.base.resource.R as ResourceR
 
 @Composable
 internal fun DeletePhotoConfirmationScreen(
@@ -58,7 +58,7 @@ internal fun DeletePhotoConfirmationScreen(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 32.dp),
-                text = pluralStringResource(id = R.plurals.confirm_deletion_title, deleteCount, deleteCount),
+                text = pluralStringResource(ResourceR.plurals.confirm_deletion_title, deleteCount, deleteCount),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
                 fontWeight = FontWeight.Bold,
@@ -68,7 +68,7 @@ internal fun DeletePhotoConfirmationScreen(
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 modifier = Modifier.padding(horizontal = 32.dp),
-                text = stringResource(R.string.confirm_deletion_description),
+                text = stringResource(ResourceR.string.confirm_deletion_description),
                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                 lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -79,14 +79,14 @@ internal fun DeletePhotoConfirmationScreen(
                 modifier = Modifier.width(200.dp),
                 onClick = onCancelDeleteClick,
             ) {
-                Text(text = stringResource(R.string.confirm_deletion_cancel))
+                Text(text = stringResource(ResourceR.string.confirm_deletion_cancel))
             }
             Spacer(modifier = Modifier.size(8.dp))
             Button(
                 modifier = Modifier.width(200.dp),
                 onClick = onConfirmDeleteClick,
             ) {
-                Text(text = pluralStringResource(id = R.plurals.confirm_deletion_confirm, deleteCount))
+                Text(text = pluralStringResource(ResourceR.plurals.confirm_deletion_confirm, deleteCount))
             }
         }
     }

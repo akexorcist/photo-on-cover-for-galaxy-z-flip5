@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.home
+package com.akexorcist.photooncover.feature.home
 
 import android.graphics.Bitmap
 import android.net.Uri
@@ -74,15 +74,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.akexorcist.photooncover.R
+import com.akexorcist.photooncover.base.ui.theme.PhotoOnCoverTheme
 import com.akexorcist.photooncover.core.config.PhotoHeightForGalaxyZFlip5
 import com.akexorcist.photooncover.core.config.PhotoRatioForGalaxyZFlip5
 import com.akexorcist.photooncover.core.config.PhotoWidthForGalaxyZFlip5
 import com.akexorcist.photooncover.core.data.PhotoData
 import com.akexorcist.photooncover.core.utility.FileUtility
 import com.akexorcist.photooncover.core.utility.toPx
-import com.akexorcist.photooncover.ui.feature.home.navigation.rememberHomeScreenNavigator
-import com.akexorcist.photooncover.ui.theme.PhotoOnCoverTheme
+import com.akexorcist.photooncover.feature.home.navigation.rememberHomeScreenNavigator
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -95,6 +94,7 @@ import org.burnoutcrew.reorderable.rememberReorderableLazyGridState
 import org.burnoutcrew.reorderable.reorderable
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
+import com.akexorcist.photooncover.base.resource.R as ResourceR
 
 @Suppress("PrivatePropertyName")
 private val DefaultPhotoItemShape = RoundedCornerShape(16.dp)
@@ -240,7 +240,7 @@ private fun HomeTopBar(
     ) {
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = stringResource(R.string.app_name),
+            text = stringResource(ResourceR.string.app_name),
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             fontWeight = FontWeight.Bold,
@@ -278,8 +278,8 @@ private fun HomeTopBarMenu(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_delete),
-                        contentDescription = stringResource(R.string.content_description_delete_menu),
+                        painter = painterResource(ResourceR.drawable.ic_delete),
+                        contentDescription = stringResource(ResourceR.string.content_description_delete_menu),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -289,8 +289,8 @@ private fun HomeTopBarMenu(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_instruction),
-                        contentDescription = stringResource(R.string.content_description_instruction_menu),
+                        painter = painterResource(ResourceR.drawable.ic_instruction),
+                        contentDescription = stringResource(ResourceR.string.content_description_instruction_menu),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -308,8 +308,8 @@ private fun HomeTopBarMenu(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_cancel),
-                        contentDescription = stringResource(R.string.content_description_exit_delete_mode_button),
+                        painter = painterResource(ResourceR.drawable.ic_cancel),
+                        contentDescription = stringResource(ResourceR.string.content_description_exit_delete_mode_button),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -319,8 +319,8 @@ private fun HomeTopBarMenu(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.ic_confirm),
-                        contentDescription = stringResource(R.string.content_description_perform_photo_deletion_button),
+                        painter = painterResource(ResourceR.drawable.ic_confirm),
+                        contentDescription = stringResource(ResourceR.string.content_description_perform_photo_deletion_button),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
@@ -394,13 +394,13 @@ private fun HomeContent(
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
                     modifier = Modifier.size(64.dp),
-                    painter = painterResource(R.drawable.ic_empty),
-                    contentDescription = stringResource(R.string.content_description_empty_photo_icon),
+                    painter = painterResource(ResourceR.drawable.ic_empty),
+                    contentDescription = stringResource(ResourceR.string.content_description_empty_photo_icon),
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     textAlign = TextAlign.Center,
-                    text = stringResource(R.string.empty_photo),
+                    text = stringResource(ResourceR.string.empty_photo),
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                     lineHeight = MaterialTheme.typography.headlineSmall.lineHeight,
                     fontWeight = FontWeight.Bold,
@@ -409,13 +409,13 @@ private fun HomeContent(
                 InfiniteBounceAnimation {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = stringResource(R.string.add_first_photo),
+                            text = stringResource(ResourceR.string.add_first_photo),
                             fontWeight = FontWeight.Bold,
                         )
                         Icon(
                             modifier = Modifier.size(32.dp),
-                            painter = painterResource(R.drawable.ic_down),
-                            contentDescription = stringResource(R.string.content_description_down_arrow_icon),
+                            painter = painterResource(ResourceR.drawable.ic_down),
+                            contentDescription = stringResource(ResourceR.string.content_description_down_arrow_icon),
                         )
                         Spacer(modifier = Modifier.size(84.dp))
                     }
@@ -514,9 +514,9 @@ private fun MarkedAsDeleteIcon(visible: Boolean) {
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.ic_selected),
+                    painter = painterResource(ResourceR.drawable.ic_selected),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
-                    contentDescription = stringResource(R.string.content_description_marked_as_delete_icon),
+                    contentDescription = stringResource(ResourceR.string.content_description_marked_as_delete_icon),
                 )
             }
         }
@@ -619,8 +619,8 @@ private fun HomeFloatingActionButton(
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_add),
-            contentDescription = stringResource(R.string.content_description_add_photo_button),
+            painter = painterResource(ResourceR.drawable.ic_add),
+            contentDescription = stringResource(ResourceR.string.content_description_add_photo_button),
         )
     }
 }

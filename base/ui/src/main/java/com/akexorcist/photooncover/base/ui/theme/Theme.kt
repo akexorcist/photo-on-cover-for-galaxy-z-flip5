@@ -1,7 +1,6 @@
-package com.akexorcist.photooncover.ui.theme
+package com.akexorcist.photooncover.base.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -14,12 +13,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.akexorcist.photooncover.core.ui.theme.Pink40
-import com.akexorcist.photooncover.core.ui.theme.Pink80
-import com.akexorcist.photooncover.core.ui.theme.Purple40
-import com.akexorcist.photooncover.core.ui.theme.Purple80
-import com.akexorcist.photooncover.core.ui.theme.PurpleGrey40
-import com.akexorcist.photooncover.core.ui.theme.PurpleGrey80
 
 @Suppress("PrivatePropertyName")
 private val DarkColorScheme = darkColorScheme(

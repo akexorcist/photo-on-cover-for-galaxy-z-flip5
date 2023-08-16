@@ -17,3 +17,6 @@ rootProject.name = "Photo on Cover"
 include(":app")
 include(":widget")
 include(":core")
+include(":feature:home")
+include(":base:resource")
+include(":base:ui")

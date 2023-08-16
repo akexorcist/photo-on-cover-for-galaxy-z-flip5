@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.home
+package com.akexorcist.photooncover.feature.home
 
 import android.graphics.Bitmap
 import android.net.Uri

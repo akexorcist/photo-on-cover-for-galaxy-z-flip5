@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.akexorcist.photooncover.ui.feature.home.HomeRoute
+import com.akexorcist.photooncover.feature.home.HomeRoute
 
 const val HomeNavigationRoute = "home"
 

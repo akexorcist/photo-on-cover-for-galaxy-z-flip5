@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.home
+package com.akexorcist.photooncover.feature.home
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -19,16 +19,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,15 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.akexorcist.photooncover.R
 import com.akexorcist.photooncover.core.utility.toPx
+import com.akexorcist.photooncover.base.resource.R as ResourceR
 
 @Composable
 internal fun InstructionScreen(
@@ -79,32 +74,32 @@ internal fun InstructionScreen(
             ) {
                 Spacer(modifier = Modifier.size(96.dp))
                 InstructionText(
-                    bullet = R.string.instruction_1_bullet,
-                    detail = R.string.instruction_1_detail,
+                    bullet = ResourceR.string.instruction_1_bullet,
+                    detail = ResourceR.string.instruction_1_detail,
                 )
                 InstructionImage(
-                    R.drawable.image_instruction_add,
-                    R.string.content_description_add_new_photo,
+                    image = R.drawable.image_instruction_add,
+                    contentDescription = ResourceR.string.content_description_add_new_photo,
                 )
                 InstructionText(
-                    bullet = R.string.instruction_2_bullet,
-                    detail = R.string.instruction_2_detail,
+                    bullet = ResourceR.string.instruction_2_bullet,
+                    detail = ResourceR.string.instruction_2_detail,
                 )
                 InstructionText(
-                    bullet = R.string.instruction_3_bullet,
-                    detail = R.string.instruction_3_detail,
+                    bullet = ResourceR.string.instruction_3_bullet,
+                    detail = ResourceR.string.instruction_3_detail,
                 )
                 InstructionImage(
-                    R.drawable.image_instruction_widget,
-                    R.string.content_description_add_widget_on_cover_screen,
+                    image = R.drawable.image_instruction_widget,
+                    contentDescription = ResourceR.string.content_description_add_widget_on_cover_screen,
                 )
                 InstructionText(
-                    bullet = R.string.instruction_4_bullet,
-                    detail = R.string.instruction_4_detail,
+                    bullet = ResourceR.string.instruction_4_bullet,
+                    detail = ResourceR.string.instruction_4_detail,
                 )
                 InstructionImage(
-                    R.drawable.image_instruction_completed,
-                    R.string.content_description_widget_added,
+                    image = R.drawable.image_instruction_completed,
+                    contentDescription = ResourceR.string.content_description_widget_added,
                 )
                 Spacer(modifier = Modifier.size(32.dp))
             }
@@ -125,9 +120,9 @@ internal fun InstructionScreen(
                 ) {
                     Icon(
                         modifier = Modifier.size(28.dp),
-                        painter = painterResource(R.drawable.ic_cancel),
+                        painter = painterResource(ResourceR.drawable.ic_cancel),
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = stringResource(R.string.content_description_close_instruction_button),
+                        contentDescription = stringResource(ResourceR.string.content_description_close_instruction_button),
                     )
                 }
             }

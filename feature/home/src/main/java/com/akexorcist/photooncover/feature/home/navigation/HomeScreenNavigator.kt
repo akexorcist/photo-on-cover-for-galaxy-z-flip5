@@ -1,4 +1,4 @@
-package com.akexorcist.photooncover.ui.feature.home.navigation
+package com.akexorcist.photooncover.feature.home.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
