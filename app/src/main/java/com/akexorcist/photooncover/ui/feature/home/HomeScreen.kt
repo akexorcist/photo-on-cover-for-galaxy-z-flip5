@@ -39,11 +39,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -76,7 +76,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -153,7 +152,8 @@ fun HomeRoute(viewModel: HomeViewModel = koinInject()) {
         onPerformPhotoDeletionClick = { viewModel.exitWithPhotoDeletion() },
         onCancelDeleteClick = { viewModel.exitWithoutPhotoDeletion() },
         onConfirmDeleteClick = { viewModel.confirmDeletePhoto() },
-        onInstructionClick = {},
+        onInstructionClick = { viewModel.enterInstructionMode() },
+        onCloseInstructionClick = { viewModel.exitInstructionMode() },
         onPhotoMoved = { fromPosition, toPosition ->
             viewModel.movePhoto(
                 fromPosition = fromPosition,
@@ -175,10 +175,12 @@ fun HomeScreen(
     onCancelDeleteClick: () -> Unit,
     onConfirmDeleteClick: () -> Unit,
     onInstructionClick: () -> Unit,
+    onCloseInstructionClick: () -> Unit,
     onPhotoMoved: (Int, Int) -> Unit,
 ) {
     val photos = uiState.photos
     val isDeleteMode = uiState is HomeUiState.DeleteMode
+    val isInstructionMode = uiState is HomeUiState.InstructionMode
     val deleteCount = photos.count { photo -> photo.markAsDelete }
     val showConfirmPhotoDeletion = !isDeleteMode && deleteCount > 0
     Box(modifier = Modifier.fillMaxSize()) {
@@ -205,76 +207,19 @@ fun HomeScreen(
                 unselectPhotoToDelete = unselectPhotoToDelete,
             )
         }
-        val verticalOffset = 20.dp.toPx().toInt()
-        DeletePhotoConfirmation(
+        val verticalSlideAnimationOffset = 20.dp.toPx().toInt()
+        DeletePhotoConfirmationScreen(
             showConfirmPhotoDeletion = showConfirmPhotoDeletion,
-            verticalOffset = verticalOffset,
+            verticalSlideAnimationOffset = verticalSlideAnimationOffset,
             deleteCount = deleteCount,
             onCancelDeleteClick = onCancelDeleteClick,
             onConfirmDeleteClick = onConfirmDeleteClick,
         )
-    }
-}
-
-@Composable
-private fun DeletePhotoConfirmation(
-    showConfirmPhotoDeletion: Boolean,
-    verticalOffset: Int,
-    deleteCount: Int,
-    onCancelDeleteClick: () -> Unit,
-    onConfirmDeleteClick: () -> Unit,
-) {
-    AnimatedVisibility(
-        visible = showConfirmPhotoDeletion,
-        enter = fadeIn() + slideInVertically { verticalOffset },
-        exit = fadeOut() + slideOutVertically { verticalOffset },
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
-                )
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                ) { },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 32.dp),
-                text = pluralStringResource(id = R.plurals.confirm_deletion_title, deleteCount, deleteCount),
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                modifier = Modifier.padding(horizontal = 32.dp),
-                text = stringResource(R.string.confirm_deletion_description),
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.size(32.dp))
-            OutlinedButton(
-                modifier = Modifier.width(200.dp),
-                onClick = onCancelDeleteClick,
-            ) {
-                Text(text = stringResource(R.string.confirm_deletion_cancel))
-            }
-            Spacer(modifier = Modifier.size(8.dp))
-            Button(
-                modifier = Modifier.width(200.dp),
-                onClick = onConfirmDeleteClick,
-            ) {
-                Text(text = pluralStringResource(id = R.plurals.confirm_deletion_confirm, deleteCount))
-            }
-        }
+        InstructionScreen(
+            isInstructionMode = isInstructionMode,
+            verticalSlideAnimationOffset = verticalSlideAnimationOffset,
+            onCloseInstructionClick = onCloseInstructionClick,
+        )
     }
 }
 
@@ -703,6 +648,7 @@ private fun HomeScreenPreview() {
             onCancelDeleteClick = {},
             onConfirmDeleteClick = {},
             onInstructionClick = {},
+            onCloseInstructionClick = {},
             onPhotoMoved = { _, _ -> },
         )
     }

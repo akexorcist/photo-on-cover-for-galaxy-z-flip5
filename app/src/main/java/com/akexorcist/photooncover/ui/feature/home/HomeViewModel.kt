@@ -17,12 +17,22 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val _isDeleteMode = MutableStateFlow(false)
+    private val _isInstructionMode = MutableStateFlow(false)
     private val _markedAsDeletePhotos: MutableStateFlow<List<PhotoData>> = MutableStateFlow(listOf())
 
-    val uiState: Flow<HomeUiState> = photoRepository.getPhotos().combine(_isDeleteMode) { photos, isDeleteMode ->
+    val uiState: Flow<HomeUiState> = photoRepository.getPhotos().combine(_isInstructionMode) { photos, isInstructionMode ->
         HomeUiState.perform(
             photos = photos,
+            isDeleteMode = false,
+            isInstructionMode = isInstructionMode,
+        )
+    }.combine(_isDeleteMode) { state, isDeleteMode ->
+        HomeUiState.perform(
+            photos = state.photos,
             isDeleteMode = isDeleteMode,
+            isInstructionMode =
+            if (isDeleteMode) false
+            else state is HomeUiState.InstructionMode,
         )
     }.combine(_markedAsDeletePhotos) { state, markedAsDeletePhotos ->
         state.update(
@@ -52,6 +62,7 @@ class HomeViewModel(
 
     fun enterDeleteMode() {
         _isDeleteMode.update { true }
+        _isInstructionMode.update { false }
     }
 
     fun exitWithoutPhotoDeletion() {
@@ -75,5 +86,14 @@ class HomeViewModel(
 
     fun unselectPhotoToDelete(photo: PhotoData) {
         _markedAsDeletePhotos.update { it.filter { deletePhoto -> deletePhoto.id != photo.id } }
+    }
+
+    fun enterInstructionMode() {
+        _isInstructionMode.update { true }
+        _isDeleteMode.update { false }
+    }
+
+    fun exitInstructionMode() {
+        _isInstructionMode.update { false }
     }
 }
