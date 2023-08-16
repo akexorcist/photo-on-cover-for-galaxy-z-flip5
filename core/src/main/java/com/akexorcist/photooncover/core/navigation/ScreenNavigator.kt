@@ -1,3 +1,3 @@
-package com.akexorcist.photooncover.navigation
+package com.akexorcist.photooncover.core.navigation
 
 interface ScreenNavigator

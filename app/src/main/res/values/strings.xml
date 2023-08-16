@@ -27,6 +27,7 @@
     <string name="content_description_add_widget_on_cover_screen">Add widget on cover screen</string>
     <string name="content_description_add_new_photo">Add new photo</string>
     <string name="content_description_widget_added">Widget added</string>
+    <string name="content_description_full_size">Full-size</string>
 
     <string name="instruction_1_bullet">1.</string>
     <string name="instruction_1_detail">Add an image from your gallery</string>
