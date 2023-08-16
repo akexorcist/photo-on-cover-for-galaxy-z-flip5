@@ -1,17 +1,22 @@
-package com.akexorcist.photooncover.ui.feature.home.navigation
+package com.akexorcist.photooncover.feature.home.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import com.akexorcist.photooncover.feature.home.HomeRoute
 
 const val HomeNavigationRoute = "home"
 
-fun NavController.navigateToHome(navOptions: NavOptions? = null) {
+fun NavController.navigateToHome() {
     this.navigate(
         route = HomeNavigationRoute,
-        navOptions = navOptions,
+        navOptions = navOptions {
+            popUpTo(HomeNavigationRoute) {
+                inclusive = true
+            }
+        },
     )
 }
 

@@ -33,7 +33,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.akexorcist.photooncover.base.core.config.PhotoRatioForGalaxyZFlip5
 import com.akexorcist.photooncover.base.core.data.PhotoData
-import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetScreenNavigator
 import com.akexorcist.photooncover.base.core.utility.FileUtility
 import java.io.File
 
@@ -44,7 +44,7 @@ private val BottomBarWidth = 192.dp
 private val BottomBarHeight = 31.dp
 
 @Composable
-fun PhotoRoute(photoViewModel: PhotoViewModel, widgetNavigation: WidgetNavigation) {
+fun PhotoRoute(photoViewModel: PhotoViewModel, widgetScreenNavigator: WidgetScreenNavigator) {
     val uiState by photoViewModel.uiState.collectAsState()
     val isPreviousPhotoAvailable = uiState.currentIndex > 0
     val isNextPhotoAvailable = uiState.currentIndex < uiState.photos.size - 1
@@ -57,7 +57,7 @@ fun PhotoRoute(photoViewModel: PhotoViewModel, widgetNavigation: WidgetNavigatio
         isNextPhotoAvailable = isNextPhotoAvailable,
         onPreviousPhotoClick = { photoViewModel.previousPhoto() },
         onNextPhotoClick = { photoViewModel.nextPhoto() },
-        onOpenAppClick = { widgetNavigation.navigateToMain(context) },
+        onOpenAppClick = { widgetScreenNavigator.navigateToMain(context) },
         onReloadClick = { actionRunCallback(ReloadWidgetCallback::class.java) },
     )
 

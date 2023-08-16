@@ -2,10 +2,10 @@ package com.akexorcist.photooncover.navigation
 
 import android.content.Context
 import android.content.Intent
-import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetScreenNavigator
 import com.akexorcist.photooncover.ui.MainActivity
 
-class DefaultWidgetNavigation : WidgetNavigation {
+class DefaultWidgetScreenNavigator : WidgetScreenNavigator {
     override fun navigateToMain(context: Context) {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.akexorcist.photooncover.feature.home"
+    namespace = "com.akexorcist.photooncover.feature.instruction"
     compileSdk = 33
 
     defaultConfig {
@@ -46,15 +46,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
     implementation("io.insert-koin:koin-core:3.4.3")
     implementation("io.insert-koin:koin-android:3.4.3")
     implementation("io.insert-koin:koin-androidx-compose:3.4.6")
     implementation("androidx.navigation:navigation-compose:2.7.0")
-
-    implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation("com.vanniktech:android-image-cropper:4.5.0")
-    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
 
     implementation(project(":base:core"))
     implementation(project(":base:resource"))

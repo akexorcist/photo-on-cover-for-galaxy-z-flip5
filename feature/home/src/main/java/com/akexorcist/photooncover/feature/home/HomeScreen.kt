@@ -41,6 +41,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -102,6 +103,7 @@ private val DefaultPhotoItemShape = RoundedCornerShape(16.dp)
 @Suppress("PrivatePropertyName")
 private val JpegCompressFormat = Bitmap.CompressFormat.JPEG
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeRoute(
     navController: NavController,
@@ -152,8 +154,10 @@ fun HomeRoute(
         onPerformPhotoDeletionClick = { viewModel.exitWithPhotoDeletion() },
         onCancelDeleteClick = { viewModel.exitWithoutPhotoDeletion() },
         onConfirmDeleteClick = { viewModel.confirmDeletePhoto() },
-        onInstructionClick = { viewModel.enterInstructionMode() },
-        onCloseInstructionClick = { viewModel.exitInstructionMode() },
+        onInstructionClick = {
+            viewModel.exitWithPhotoDeletion()
+            screenNavigator.navigateToInstruction()
+        },
         onPhotoMoved = { fromPosition, toPosition ->
             viewModel.movePhoto(
                 fromPosition = fromPosition,
@@ -163,6 +167,7 @@ fun HomeRoute(
     )
 }
 
+@ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
@@ -175,12 +180,10 @@ fun HomeScreen(
     onCancelDeleteClick: () -> Unit,
     onConfirmDeleteClick: () -> Unit,
     onInstructionClick: () -> Unit,
-    onCloseInstructionClick: () -> Unit,
     onPhotoMoved: (Int, Int) -> Unit,
 ) {
     val photos = uiState.photos
     val isDeleteMode = uiState is HomeUiState.DeleteMode
-    val isInstructionMode = uiState is HomeUiState.InstructionMode
     val deleteCount = photos.count { photo -> photo.markAsDelete }
     val showConfirmPhotoDeletion = !isDeleteMode && deleteCount > 0
     Box(modifier = Modifier.fillMaxSize()) {
@@ -214,11 +217,6 @@ fun HomeScreen(
             deleteCount = deleteCount,
             onCancelDeleteClick = onCancelDeleteClick,
             onConfirmDeleteClick = onConfirmDeleteClick,
-        )
-        InstructionScreen(
-            isInstructionMode = isInstructionMode,
-            verticalSlideAnimationOffset = verticalSlideAnimationOffset,
-            onCloseInstructionClick = onCloseInstructionClick,
         )
     }
 }
@@ -625,6 +623,7 @@ private fun HomeFloatingActionButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
@@ -643,7 +642,6 @@ private fun HomeScreenPreview() {
             onCancelDeleteClick = {},
             onConfirmDeleteClick = {},
             onInstructionClick = {},
-            onCloseInstructionClick = {},
             onPhotoMoved = { _, _ -> },
         )
     }

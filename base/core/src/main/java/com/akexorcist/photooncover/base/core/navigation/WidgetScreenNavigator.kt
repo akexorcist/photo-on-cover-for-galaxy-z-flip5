@@ -2,6 +2,6 @@ package com.akexorcist.photooncover.base.core.navigation
 
 import android.content.Context
 
-interface WidgetNavigation {
+interface WidgetScreenNavigator {
     fun navigateToMain(context: Context)
 }

@@ -85,5 +85,6 @@ dependencies {
     implementation(project(":base:resource"))
     implementation(project(":base:ui"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:instruction"))
     implementation(project(":feature:widget"))
 }

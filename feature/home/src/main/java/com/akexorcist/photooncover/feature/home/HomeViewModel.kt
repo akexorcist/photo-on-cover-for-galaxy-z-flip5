@@ -100,15 +100,6 @@ class HomeViewModel(
         _markedAsDeletePhotos.update { it.filter { deletePhoto -> deletePhoto.id != photo.id } }
     }
 
-    fun enterInstructionMode() {
-        setIsInstructionMode(true)
-        setIsDeleteMode(false)
-    }
-
-    fun exitInstructionMode() {
-        setIsInstructionMode(false)
-    }
-
     private fun setIsDeleteMode(isDeleteMode: Boolean) {
         handle[IS_DELETE_MODE_KEY] = isDeleteMode
     }

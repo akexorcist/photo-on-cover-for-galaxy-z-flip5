@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import com.akexorcist.photooncover.base.core.navigation.WidgetNavigation
+import com.akexorcist.photooncover.base.core.navigation.WidgetScreenNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -16,11 +16,11 @@ import org.koin.core.component.inject
 
 class PhotoWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
     private val viewModel: PhotoViewModel by inject()
-    private val widgetNavigation: WidgetNavigation by inject()
+    private val widgetScreenNavigator: WidgetScreenNavigator by inject()
 
     override val glanceAppWidget: GlanceAppWidget = PhotoWidget(
         photoViewModel = viewModel,
-        widgetNavigation = widgetNavigation,
+        widgetScreenNavigator = widgetScreenNavigator,
     )
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
