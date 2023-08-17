@@ -66,3 +66,6 @@ fastlane/readme.md
 .idea
 *.gpg
 core/schemas
+.DS_Store
+*.aab
+app/release/output-metadata.json
